@@ -2,15 +2,28 @@ package com.miguelsalamanca.nousbooks.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Id;
+import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "books")
+@Getter @Setter @NoArgsConstructor
 public class Book {
     @Id
-    public Long id;
-    public int book;
-    public int google_books_id;
-    public String title;
-    public String description;
-    public String thumbnail;
-    public LocalDateTime published_date;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Integer googleBooksId;
+    private String title;
+    private String description;
+    private String thumbnail;
+    @CreationTimestamp
+    private LocalDateTime publishedDate;
 }

@@ -2,9 +2,11 @@ package com.miguelsalamanca.nousbooks.model;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
+import com.miguelsalamanca.nousbooks.enums.ReadingStatus;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,18 +18,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="notes")
+@Table(name = "user_books")
 @Getter @Setter @NoArgsConstructor
-public class Note {
+public class UserBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long user_id;
+
     @ManyToOne
-    @JoinColumn(name = "book_id")
+    @JoinColumn (name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn (name = "book_id")
     private Book book;
-    private String title;
-    private String content;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private ReadingStatus status;
+    private Integer rating;
+    private String review;
+    private LocalDateTime startedAt;
+    private LocalDateTime finishedAt;
 }
