@@ -22,9 +22,11 @@ public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long user_id;
-    @ManyToOne
-    @JoinColumn(name = "book_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
     private String title;
     private String content;

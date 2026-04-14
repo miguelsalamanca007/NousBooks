@@ -10,16 +10,16 @@ import com.miguelsalamanca.nousbooks.mapper.BookMapper;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.repository.BookRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
-
-    public BookService(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
+    private final BookMapper bookMapper;
 
     public Book createBook(CreateBookRequest request) {
-        Book book = BookMapper.toEntity(request);
+        Book book = bookMapper.toEntity(request);
         return bookRepository.save(book);
     }
 

@@ -10,29 +10,35 @@ import com.miguelsalamanca.nousbooks.dto.CreateNoteRequest;
 import com.miguelsalamanca.nousbooks.mapper.NoteMapper;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.model.Note;
+import com.miguelsalamanca.nousbooks.model.User;
 import com.miguelsalamanca.nousbooks.repository.NoteRepository;
+import com.miguelsalamanca.nousbooks.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import com.miguelsalamanca.nousbooks.repository.BookRepository;
 
 @Service
+@RequiredArgsConstructor
 public class NoteService {
+
     private final NoteRepository noteRepository;
     private final BookRepository bookRepository;
-
-    public NoteService(NoteRepository noteRepository, BookRepository bookRepository) {
-        this.noteRepository = noteRepository;
-        this.bookRepository = bookRepository;
-    }
+    private final NoteMapper noteMapper;
+    private final UserRepository userRepository;
 
     public Note createNote(CreateNoteRequest request) {
-                Book book = bookRepository.findById(request.getBookId())
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
-        Note note = NoteMapper.toEntity(request);
+        Note note = noteMapper.toEntity(request);
         note.setBook(book);
-
+        note.setUser(user);
 
         return noteRepository.save(note);
     }
-    
+
     public List<Note> getAllNotes() {
         return noteRepository.findAll();
     }

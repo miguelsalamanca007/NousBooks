@@ -1,12 +1,15 @@
 package com.miguelsalamanca.nousbooks.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.miguelsalamanca.nousbooks.dto.BookDto;
 import com.miguelsalamanca.nousbooks.dto.CreateBookRequest;
 import com.miguelsalamanca.nousbooks.model.Book;
 
+@Component
 public class BookMapper {
     
-    public static Book toEntity(CreateBookRequest request) {
+    public Book toEntity(CreateBookRequest request) {
         Book book = new Book();
         book.setGoogleBooksId(request.getGoogleBooksId());
         book.setTitle(request.getTitle());
@@ -16,7 +19,7 @@ public class BookMapper {
         return book;
     }
 
-    public static BookDto toDto(Book book) {
+    public BookDto toDto(Book book) {
         BookDto dto = new BookDto();
         dto.setId(book.getId());
         dto.setGoogleBooksId(book.getGoogleBooksId());

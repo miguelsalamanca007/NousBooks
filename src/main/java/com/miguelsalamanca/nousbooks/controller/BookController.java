@@ -10,6 +10,8 @@ import com.miguelsalamanca.nousbooks.mapper.BookMapper;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.service.BookService;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,26 +23,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
+@RequiredArgsConstructor
 public class BookController {
 
     private final BookService bookService;
-
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+    private final BookMapper bookMapper;
 
     @PostMapping
     public BookDto create(@RequestBody CreateBookRequest request) {
         Book saved = bookService.createBook(request);
-        return BookMapper.toDto(saved);
+        return bookMapper.toDto(saved);
     }
     
     @GetMapping
     public List<BookDto> getAll() {
         return bookService.getAllBooks()
         .stream()
-        .map(BookMapper::toDto)
+        .map(bookMapper::toDto)
         .toList();
     }
 
@@ -49,7 +49,7 @@ public class BookController {
         Book book = bookService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
 
-        return BookMapper.toDto(book);
+        return bookMapper.toDto(book);
     }
     
 }

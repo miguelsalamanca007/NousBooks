@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class BookDto {
     private Long id;
-    private int googleBooksId;
+    private String googleBooksId;
     private String title;
     private String description;
     private String thumbnail;

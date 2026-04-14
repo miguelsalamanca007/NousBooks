@@ -9,6 +9,8 @@ import com.miguelsalamanca.nousbooks.mapper.NoteMapper;
 import com.miguelsalamanca.nousbooks.model.Note;
 import com.miguelsalamanca.nousbooks.service.NoteService;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,26 +20,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/notes")
+@RequestMapping("/api/notes")
+@RequiredArgsConstructor
 public class NoteController {
 
     private final NoteService noteService;
-
-    public NoteController(NoteService noteService) {
-        this.noteService = noteService;
-    }
+    private final NoteMapper noteMapper;
 
     @PostMapping
     public NoteDto create(@RequestBody CreateNoteRequest request) {
         Note saved = noteService.createNote(request);
-        return NoteMapper.toDto(saved);
+        return noteMapper.toDto(saved);
     }
 
     @GetMapping
     public List<NoteDto> getAll() {
         return noteService.getAllNotes()
                 .stream()
-                .map(NoteMapper::toDto)
+                .map(noteMapper::toDto)
                 .toList();
     }
 
@@ -45,7 +45,7 @@ public class NoteController {
     public List<NoteDto> getNotesByBook(@PathVariable Long bookId) {
         return noteService.getNotesByBook(bookId)
                 .stream()
-                .map(NoteMapper::toDto)
+                .map(noteMapper::toDto)
                 .toList();
 }
     

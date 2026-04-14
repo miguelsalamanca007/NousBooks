@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor
 public class CreateBookRequest {
-    private int googleBooksId;
+    private String googleBooksId;
     private String title;
     private String description;
     private String thumbnail;

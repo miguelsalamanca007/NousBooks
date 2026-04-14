@@ -7,5 +7,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class CreateNoteRequest {
     private String content;
+    private Long userId;
     private Long bookId;
+    private String title;
 }
