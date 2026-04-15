@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +28,7 @@ public class UserBookController {
     private final UserBookMapper userBookMapper;
 
     @PostMapping
-    public UserBookDto create(@RequestBody CreateUserBookRequest request,
+    public UserBookDto create(@Valid @RequestBody CreateUserBookRequest request,
                               @AuthenticationPrincipal User currentUser) {
         return userBookMapper.toDto(userBookService.createUserBook(request, currentUser));
     }

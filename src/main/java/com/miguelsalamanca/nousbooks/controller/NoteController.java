@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +30,7 @@ public class NoteController {
     private final NoteMapper noteMapper;
 
     @PostMapping
-    public NoteDto create(@RequestBody CreateNoteRequest request,
+    public NoteDto create(@Valid @RequestBody CreateNoteRequest request,
                           @AuthenticationPrincipal User currentUser) {
         Note saved = noteService.createNote(request, currentUser);
         return noteMapper.toDto(saved);
