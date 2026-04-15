@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.miguelsalamanca.nousbooks.enums.ReadingStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,6 +41,7 @@ public class UserBook {
     @Enumerated(EnumType.STRING)
     private ReadingStatus status;
     private Integer rating;
+    @Column(length = 2000)
     private String review;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;

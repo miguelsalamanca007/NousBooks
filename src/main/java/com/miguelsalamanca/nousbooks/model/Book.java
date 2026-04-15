@@ -22,6 +22,7 @@ public class Book {
     @Column(unique = true)
     private String googleBooksId;
     private String title;
+    @Column(length = 2000)
     private String description;
     private String thumbnail;
     private LocalDateTime publishedDate;
