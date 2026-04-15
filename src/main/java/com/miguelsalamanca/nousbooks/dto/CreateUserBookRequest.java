@@ -10,7 +10,6 @@ import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor
 public class CreateUserBookRequest {
-    private Long userId;
     private Long bookId;
     private ReadingStatus status;
     private Integer rating;
