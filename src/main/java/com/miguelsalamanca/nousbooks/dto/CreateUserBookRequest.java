@@ -6,7 +6,7 @@ import com.miguelsalamanca.nousbooks.enums.ReadingStatus;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +14,8 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class CreateUserBookRequest {
 
-    @NotNull
-    private Long bookId;
+    @NotBlank
+    private String googleBooksId;
 
     private ReadingStatus status;
 

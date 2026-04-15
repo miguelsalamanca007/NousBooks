@@ -1,7 +1,5 @@
 package com.miguelsalamanca.nousbooks.model;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,5 +23,5 @@ public class Book {
     @Column(length = 2000)
     private String description;
     private String thumbnail;
-    private LocalDateTime publishedDate;
+    private String publishedDate;
 }

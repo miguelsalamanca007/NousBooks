@@ -1,0 +1,1 @@
+ALTER TABLE books ALTER COLUMN published_date TYPE VARCHAR(20);
