@@ -11,6 +11,7 @@ public class NoteMapper {
     
     public Note toEntity(CreateNoteRequest request) {
         Note note = new Note();
+        note.setTitle(request.getTitle());
         note.setContent(request.getContent());
         return note;
     }
