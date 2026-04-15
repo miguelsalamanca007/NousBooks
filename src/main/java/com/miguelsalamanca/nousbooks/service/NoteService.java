@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.dto.CreateNoteRequest;
+import com.miguelsalamanca.nousbooks.dto.UpdateNoteRequest;
 import com.miguelsalamanca.nousbooks.mapper.NoteMapper;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.model.Note;
@@ -39,5 +40,21 @@ public class NoteService {
 
     public List<Note> getMyNotesByBook(Long bookId, User currentUser) {
         return noteRepository.findByUserIdAndBookId(currentUser.getId(), bookId);
+    }
+
+    public Note updateNote(Long id, UpdateNoteRequest request, User currentUser) {
+        Note note = noteRepository.findByIdAndUserId(id, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
+
+        if (request.getTitle() != null) note.setTitle(request.getTitle());
+        if (request.getContent() != null) note.setContent(request.getContent());
+
+        return noteRepository.save(note);
+    }
+
+    public void deleteNote(Long id, User currentUser) {
+        Note note = noteRepository.findByIdAndUserId(id, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
+        noteRepository.delete(note);
     }
 }

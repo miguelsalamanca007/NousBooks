@@ -2,9 +2,12 @@ package com.miguelsalamanca.nousbooks.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.dto.CreateUserBookRequest;
+import com.miguelsalamanca.nousbooks.dto.UpdateUserBookRequest;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.model.User;
 import com.miguelsalamanca.nousbooks.model.UserBook;
@@ -36,5 +39,24 @@ public class UserBookService {
 
     public List<UserBook> getMyBooks(User currentUser) {
         return userBookRepository.findByUserId(currentUser.getId());
+    }
+
+    public UserBook updateUserBook(Long id, UpdateUserBookRequest request, User currentUser) {
+        UserBook userBook = userBookRepository.findByIdAndUserId(id, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entry not found"));
+
+        if (request.getStatus() != null) userBook.setStatus(request.getStatus());
+        if (request.getRating() != null) userBook.setRating(request.getRating());
+        if (request.getReview() != null) userBook.setReview(request.getReview());
+        if (request.getStartedAt() != null) userBook.setStartedAt(request.getStartedAt());
+        if (request.getFinishedAt() != null) userBook.setFinishedAt(request.getFinishedAt());
+
+        return userBookRepository.save(userBook);
+    }
+
+    public void deleteUserBook(Long id, User currentUser) {
+        UserBook userBook = userBookRepository.findByIdAndUserId(id, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entry not found"));
+        userBookRepository.delete(userBook);
     }
 }
