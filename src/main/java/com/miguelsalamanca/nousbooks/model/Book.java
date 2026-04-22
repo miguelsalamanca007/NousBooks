@@ -19,9 +19,11 @@ public class Book {
     private Long id;
     @Column(unique = true)
     private String googleBooksId;
+    @Column(length = 500)
     private String title;
     @Column(length = 2000)
     private String description;
+    @Column(columnDefinition = "TEXT")
     private String thumbnail;
     private String publishedDate;
 }
