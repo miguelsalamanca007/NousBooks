@@ -56,6 +56,12 @@ public class NoteController {
                 .toList();
     }
 
+    @GetMapping("/{id}")
+    public NoteDto getById(@PathVariable Long id,
+                           @AuthenticationPrincipal User currentUser) {
+        return noteMapper.toDto(noteService.getNote(id, currentUser));
+    }
+
     @PatchMapping("/{id}")
     public NoteDto update(@PathVariable Long id,
                           @Valid @RequestBody UpdateNoteRequest request,

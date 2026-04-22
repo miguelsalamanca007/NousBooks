@@ -96,6 +96,8 @@ export const userBooksApi = {
 export const notesApi = {
   getMyNotes: () => request<Note[]>("/api/notes"),
 
+  getById: (id: number) => request<Note>(`/api/notes/${id}`),
+
   getByBook: (bookId: number) =>
     request<Note[]>(`/api/notes/by-book/${bookId}`),
 

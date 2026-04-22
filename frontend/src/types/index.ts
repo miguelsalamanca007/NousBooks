@@ -35,6 +35,7 @@ export interface UserBook {
 export interface Note {
   id: number;
   bookId: number;
+  bookTitle: string | null;
   title: string | null;
   content: string;
   createdAt: string;

@@ -23,6 +23,7 @@ public class NoteMapper {
         dto.setTitle(note.getTitle());
         dto.setCreatedAt(note.getCreatedAt());
         dto.setBookId(note.getBook() != null ? note.getBook().getId() : null);
+        dto.setBookTitle(note.getBook() != null ? note.getBook().getTitle() : null);
         return dto;
     }
 }

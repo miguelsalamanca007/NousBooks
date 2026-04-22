@@ -42,6 +42,11 @@ public class NoteService {
         return noteRepository.findByUserIdAndBookId(currentUser.getId(), bookId);
     }
 
+    public Note getNote(Long id, User currentUser) {
+        return noteRepository.findByIdAndUserId(id, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
+    }
+
     public Note updateNote(Long id, UpdateNoteRequest request, User currentUser) {
         Note note = noteRepository.findByIdAndUserId(id, currentUser.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));

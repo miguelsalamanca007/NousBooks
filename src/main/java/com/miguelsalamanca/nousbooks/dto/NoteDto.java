@@ -12,5 +12,6 @@ public class NoteDto {
     private String title;
     private LocalDateTime createdAt;
     private Long bookId;
+    private String bookTitle;
     private String content;
 }
