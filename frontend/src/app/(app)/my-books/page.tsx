@@ -5,17 +5,15 @@ import { userBooksApi } from "@/lib/api";
 import { ReadingStatus, UserBook } from "@/types";
 
 const STATUS_LABELS: Record<ReadingStatus, string> = {
-  WANT_TO_READ: "Want to read",
+  TO_READ: "Want to read",
   READING: "Reading",
   READ: "Read",
-  ABANDONED: "Abandoned",
 };
 
 const STATUS_COLORS: Record<ReadingStatus, string> = {
-  WANT_TO_READ: "bg-zinc-100 text-zinc-600",
+  TO_READ: "bg-zinc-100 text-zinc-600",
   READING: "bg-blue-100 text-blue-700",
   READ: "bg-green-100 text-green-700",
-  ABANDONED: "bg-red-100 text-red-600",
 };
 
 export default function MyBooksPage() {

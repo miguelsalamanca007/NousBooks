@@ -72,7 +72,7 @@ export const booksApi = {
 export const userBooksApi = {
   getMyBooks: () => request<UserBook[]>("/api/user-books/me"),
 
-  add: (googleBooksId: string, status: ReadingStatus = "WANT_TO_READ") =>
+  add: (googleBooksId: string, status: ReadingStatus = "TO_READ") =>
     request<UserBook>("/api/user-books", {
       method: "POST",
       body: JSON.stringify({ googleBooksId, status }),

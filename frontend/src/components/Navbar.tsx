@@ -44,7 +44,7 @@ export default function Navbar() {
 
   const addBook = useMutation({
     mutationFn: (googleBooksId: string) =>
-      userBooksApi.add(googleBooksId, "WANT_TO_READ"),
+      userBooksApi.add(googleBooksId, "TO_READ"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myBooks"] });
     },

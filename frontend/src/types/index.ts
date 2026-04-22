@@ -20,7 +20,7 @@ export interface Book {
   publishedDate: string;
 }
 
-export type ReadingStatus = "WANT_TO_READ" | "READING" | "READ" | "ABANDONED";
+export type ReadingStatus = "TO_READ" | "READING" | "READ";
 
 export interface UserBook {
   id: number;

@@ -6,7 +6,7 @@ import { ReadingStatus, UserBook } from "@/types";
 
 const COLUMNS: { status: ReadingStatus; label: string }[] = [
   { status: "READING", label: "Currently reading" },
-  { status: "WANT_TO_READ", label: "Want to read" },
+  { status: "TO_READ", label: "Want to read" },
   { status: "READ", label: "Read books" },
 ];
 
