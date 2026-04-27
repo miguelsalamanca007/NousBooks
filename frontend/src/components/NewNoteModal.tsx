@@ -141,7 +141,7 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-500 hover:bg-zinc-100"
+              className="rounded-lg border border-red-500 px-4 py-2 text-sm text-red-400 hover:bg-red-50"
             >
               Cancel
             </button>
