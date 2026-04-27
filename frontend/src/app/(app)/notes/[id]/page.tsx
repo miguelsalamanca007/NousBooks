@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notesApi } from "@/lib/api";
@@ -10,9 +10,9 @@ export default function NoteDetailPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [editing, setEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: note, isLoading } = useQuery({
     queryKey: ["note", id],
@@ -20,13 +20,29 @@ export default function NoteDetailPage() {
     enabled: !!id,
   });
 
+  // Initialize local state when the note loads for the first time (or when we
+  // navigate to a different note). We key on `note.id` so a background refetch
+  // after auto-save doesn't clobber what the user is currently typing.
+  useEffect(() => {
+    if (!note) return;
+    setTitle(note.title ?? "");
+    setContent(note.content);
+  }, [note?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the textarea height in sync with the content — grows as you type.
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }, [content]);
+
   const updateNote = useMutation({
     mutationFn: (data: { title?: string; content?: string }) =>
       notesApi.update(Number(id), data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["note", id] });
       queryClient.invalidateQueries({ queryKey: ["myNotes"] });
-      setEditing(false);
     },
   });
 
@@ -38,99 +54,81 @@ export default function NoteDetailPage() {
     },
   });
 
-  function startEditing() {
-    if (!note) return;
-    setEditTitle(note.title ?? "");
-    setEditContent(note.content);
-    setEditing(true);
-  }
-
   if (isLoading) return <p className="text-sm text-zinc-400">Loading…</p>;
   if (!note) return <p className="text-sm text-zinc-400">Note not found.</p>;
 
   return (
     <div className="mx-auto max-w-2xl">
-      {/* Back */}
-      <button
-        onClick={() => router.back()}
-        className="mb-6 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-700"
-      >
-        ← Back
-      </button>
 
-      {editing ? (
-        <div className="flex flex-col gap-4">
-          <input
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            placeholder="Title"
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-xl font-semibold outline-none focus:border-zinc-500"
-          />
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            rows={10}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm leading-relaxed outline-none focus:border-zinc-500"
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={() =>
-                updateNote.mutate({ title: editTitle, content: editContent })
-              }
-              disabled={updateNote.isPending}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
-            >
-              {updateNote.isPending ? "Saving…" : "Save"}
-            </button>
-            <button
-              onClick={() => setEditing(false)}
-              className="rounded-lg border border-zinc-200 px-4 py-2 text-sm hover:bg-zinc-50"
-            >
-              Cancel
-            </button>
-          </div>
+      {/* Back + Delete */}
+      <div className="mb-8 flex items-center justify-between">
+        <button
+          onClick={() => router.push("/notes")}
+          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
+        >
+          ← Back
+        </button>
+
+        <div className="flex items-center gap-3">
+          {updateNote.isPending && (
+            <span className="text-xs text-zinc-400">Saving…</span>
+          )}
+          <button
+            onClick={() => {
+              if (confirm("Delete this note?")) deleteNote.mutate();
+            }}
+            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50"
+          >
+            Delete
+          </button>
         </div>
-      ) : (
-        <>
-          {/* Header */}
-          <div className="mb-1 flex items-start justify-between gap-4">
-            <h1 className="text-3xl font-semibold leading-tight">
-              {note.title || <span className="text-zinc-300">Untitled</span>}
-            </h1>
-            <div className="flex shrink-0 gap-2">
-              <button
-                onClick={startEditing}
-                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:bg-zinc-50"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm("Delete this note?")) deleteNote.mutate();
-                }}
-                className="rounded-lg border border-red-100 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      </div>
 
-          {/* Book + date */}
-          <p className="mb-6 text-sm text-zinc-400">
-            {note.bookTitle && <span>{note.bookTitle} · </span>}
-            {new Date(note.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
+      {/* Title — click to edit, auto-save on blur */}
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        onBlur={() => {
+          if (title !== (note.title ?? "")) {
+            updateNote.mutate({ title: title.trim() || undefined });
+          }
+        }}
+        onKeyDown={(e) => {
+          // Tab / Enter → jump to the content area
+          if (e.key === "Enter" || e.key === "Tab") {
+            e.preventDefault();
+            contentRef.current?.focus();
+          }
+        }}
+        placeholder="Untitled"
+        className="mb-2 w-full bg-transparent text-3xl font-semibold text-zinc-800 outline-none placeholder:text-zinc-300"
+      />
 
-          {/* Content */}
-          <blockquote className="border-l-2 border-zinc-200 pl-5 text-zinc-700 leading-relaxed whitespace-pre-wrap">
-            {note.content}
-          </blockquote>
-        </>
-      )}
+      {/* Metadata */}
+      <p className="mb-8 text-sm text-zinc-400">
+        {note.bookTitle && <span>{note.bookTitle} · </span>}
+        {new Date(note.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </p>
+
+      {/* Content — click to edit, auto-grows, auto-save on blur */}
+      <textarea
+        ref={contentRef}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        onBlur={() => {
+          if (content !== note.content) {
+            updateNote.mutate({ content });
+          }
+        }}
+        placeholder="Write something…"
+        rows={1}
+        className="w-full resize-none bg-transparent text-base leading-relaxed text-zinc-700 outline-none placeholder:text-zinc-300"
+      />
+
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authApi, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import BookIcon from "@/components/BookIcon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,8 +35,15 @@ export default function LoginPage() {
   }
 
   return (
+    <div>
+      <div className="mb-6 flex flex-col items-center gap-2">
+        <BookIcon className="h-10 w-10 text-zinc-700" />
+        <p className="text-3xl font-semibold tracking-tight text-zinc-800">
+          NousBooks
+        </p>
+      </div>
     <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Sign in</h1>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-600">Sign in</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
@@ -46,7 +54,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200 text-zinc-500"
           />
         </div>
 
@@ -58,7 +66,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200 text-zinc-500"
           />
         </div>
 
@@ -83,6 +91,7 @@ export default function LoginPage() {
           Register
         </Link>
       </p>
+    </div>
     </div>
   );
 }

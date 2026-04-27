@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.client.GoogleBooksClient;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -29,14 +31,17 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional(readOnly = true)
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Book> findById(Long id) {
         return bookRepository.findById(id);
     }
 
+    /** Search hits Google Books only — no DB I/O, so no transaction needed. */
     public List<BookSearchResultDto> search(String query) {
         return googleBooksClient.search(query);
     }
@@ -44,6 +49,11 @@ public class BookService {
     /**
      * Returns the local Book for the given Google Books ID, fetching and
      * persisting it from the Google Books API if it hasn't been saved yet.
+     *
+     * Wrapped in a transaction so the lookup + insert + (downstream) UserBook
+     * insert all commit or roll back together. Two concurrent callers can
+     * still race past the existence check — if the second insert violates the
+     * unique constraint we surface a 409, retry-friendly for the client.
      */
     public Book findOrCreateByGoogleBooksId(String googleBooksId) {
         return bookRepository.findByGoogleBooksId(googleBooksId)

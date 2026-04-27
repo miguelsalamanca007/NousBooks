@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authApi, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
+import BookIcon from "@/components/BookIcon";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -40,8 +41,15 @@ export default function RegisterPage() {
   }
 
   return (
+    <div>
+      <div className="mb-6 flex flex-col items-center gap-2">
+        <BookIcon className="h-10 w-10 text-zinc-700" />
+        <p className="text-3xl font-semibold tracking-tight text-zinc-800">
+          NousBooks
+        </p>
+      </div>
     <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight">
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-600">
         Create account
       </h1>
 
@@ -54,7 +62,7 @@ export default function RegisterPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200 text-zinc-500"
           />
         </div>
 
@@ -67,7 +75,7 @@ export default function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200 text-zinc-500"
           />
           <p className="text-xs text-zinc-400">At least 8 characters</p>
         </div>
@@ -93,6 +101,7 @@ export default function RegisterPage() {
           Sign in
         </Link>
       </p>
+    </div>
     </div>
   );
 }

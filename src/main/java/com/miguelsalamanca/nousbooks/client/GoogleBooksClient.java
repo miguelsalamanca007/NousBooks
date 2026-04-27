@@ -8,10 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miguelsalamanca.nousbooks.dto.BookSearchResultDto;
@@ -33,8 +34,18 @@ public class GoogleBooksClient {
     }
 
     public List<BookSearchResultDto> search(String query) {
+        // UriComponentsBuilder.queryParam URL-encodes both keys and values, so a
+        // user typing "harry & potter" or "key=foo" can't break out of the query
+        // string or override our `key=` parameter.
+        String uri = UriComponentsBuilder.fromPath("/volumes")
+                .queryParam("q", query)
+                .queryParam("maxResults", 20)
+                .queryParam("printType", "books")
+                .queryParamIfPresent("key", apiKeyAsOptional())
+                .build()
+                .toUriString();
+
         try {
-            String uri = buildUri("/volumes?q={q}&maxResults=20&printType=books", query);
             SearchResponse response = restClient.get()
                     .uri(uri)
                     .retrieve()
@@ -53,8 +64,15 @@ public class GoogleBooksClient {
     }
 
     public BookSearchResultDto fetchById(String googleBooksId) {
+        // The path segment is encoded by `pathSegment`, so an id with weird
+        // characters is escaped instead of injected into the URL.
+        String uri = UriComponentsBuilder.fromPath("/volumes")
+                .pathSegment(googleBooksId)
+                .queryParamIfPresent("key", apiKeyAsOptional())
+                .build()
+                .toUriString();
+
         try {
-            String uri = buildUri("/volumes/" + googleBooksId, null);
             Item item = restClient.get()
                     .uri(uri)
                     .retrieve()
@@ -69,17 +87,8 @@ public class GoogleBooksClient {
         }
     }
 
-    /** Appends the API key to the URI if one is configured. */
-    private String buildUri(String base, String query) {
-        StringBuilder uri = new StringBuilder(base);
-        if (StringUtils.hasText(apiKey)) {
-            uri.append(base.contains("?") ? "&" : "?").append("key=").append(apiKey);
-        }
-        // Replace {q} placeholder
-        if (query != null) {
-            return uri.toString().replace("{q}", query);
-        }
-        return uri.toString();
+    private java.util.Optional<String> apiKeyAsOptional() {
+        return StringUtils.hasText(apiKey) ? java.util.Optional.of(apiKey) : java.util.Optional.empty();
     }
 
     private BookSearchResultDto toDto(Item item) {

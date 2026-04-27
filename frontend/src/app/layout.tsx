@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full bg-zinc-50 text-zinc-900">
+      <body className="min-h-full bg-amber-50 text-zinc-900">
         <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>

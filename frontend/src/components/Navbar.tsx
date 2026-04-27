@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
-import { BookSearchResult } from "@/types";
+import BookIcon from "@/components/BookIcon";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -53,10 +54,10 @@ export default function Navbar() {
   const navLink = (href: string, label: string) => (
     <Link
       href={href}
-      className={`text-sm font-medium transition-colors ${
+      className={`text-base font-medium transition-colors ${
         pathname === href
           ? "text-zinc-900"
-          : "text-zinc-400 hover:text-zinc-700"
+          : "text-zinc-600 hover:text-zinc-900"
       }`}
     >
       {label}
@@ -64,10 +65,12 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white">
+    <header className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-6">
+
         {/* Logo */}
-        <Link href="/dashboard" className="text-base font-semibold tracking-tight shrink-0">
+        <Link href="/dashboard" className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-black">
+          <BookIcon className="h-5 w-5" />
           Nous Books
         </Link>
 
@@ -75,7 +78,7 @@ export default function Navbar() {
         <nav className="flex items-center gap-5">
           {navLink("/dashboard", "Home")}
           {navLink("/my-books", "My Books")}
-          {navLink("/notes", "Notes")}
+          {navLink("/notes", "My Notes")}
         </nav>
 
         {/* Search */}
@@ -88,7 +91,8 @@ export default function Navbar() {
             }}
             onFocus={() => query.length > 2 && setOpen(true)}
             placeholder="Search..."
-            className="w-full rounded-full border border-zinc-300 bg-zinc-50 px-4 py-1.5 text-sm outline-none focus:border-zinc-400 focus:bg-white"
+            aria-label="Search books"
+            className="w-full rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400"
           />
 
           {open && debouncedQuery.length > 2 && (
@@ -99,22 +103,25 @@ export default function Navbar() {
               {!isFetching && results.length === 0 && (
                 <p className="px-4 py-3 text-sm text-zinc-400">No results</p>
               )}
-              {results.slice(0, 6).map((book: BookSearchResult) => (
+              {results.slice(0, 6).map((book) => (
                 <div
                   key={book.googleBooksId}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50"
                 >
                   {book.thumbnail ? (
-                    <img
+                    <Image
                       src={book.thumbnail}
                       alt={book.title}
+                      width={28}
+                      height={40}
+                      unoptimized
                       className="h-10 w-7 shrink-0 rounded object-cover"
                     />
                   ) : (
                     <div className="h-10 w-7 shrink-0 rounded bg-zinc-100" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{book.title}</p>
+                    <p className="truncate text-sm font-medium text-zinc-600">{book.title}</p>
                     {book.authors?.length > 0 && (
                       <p className="truncate text-xs text-zinc-400">
                         {book.authors[0]}
@@ -127,7 +134,7 @@ export default function Navbar() {
                       setOpen(false);
                       setQuery("");
                     }}
-                    className="shrink-0 rounded-full border border-zinc-300 px-2.5 py-1 text-xs font-medium hover:bg-zinc-100"
+                    className="shrink-0 rounded-full border border-zinc-400 px-2.5 py-1 text-xs font-semibold text-zinc-800 hover:bg-amber-100"
                   >
                     + Add
                   </button>
@@ -140,16 +147,18 @@ export default function Navbar() {
         {/* User icon */}
         <button
           onClick={() => {
+            queryClient.clear();
             logout();
             router.push("/login");
           }}
-          title="Sign out"
+          aria-label="Sign out"
           className="shrink-0 rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
+            aria-hidden="true"
             className="h-6 w-6"
           >
             <path

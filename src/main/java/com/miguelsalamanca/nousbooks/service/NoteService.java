@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.dto.CreateNoteRequest;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NoteService {
 
     private final NoteRepository noteRepository;
@@ -34,14 +36,17 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
+    @Transactional(readOnly = true)
     public List<Note> getMyNotes(User currentUser) {
         return noteRepository.findByUserId(currentUser.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<Note> getMyNotesByBook(Long bookId, User currentUser) {
         return noteRepository.findByUserIdAndBookId(currentUser.getId(), bookId);
     }
 
+    @Transactional(readOnly = true)
     public Note getNote(Long id, User currentUser) {
         return noteRepository.findByIdAndUserId(id, currentUser.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));

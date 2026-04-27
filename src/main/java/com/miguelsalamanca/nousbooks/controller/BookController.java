@@ -3,6 +3,7 @@ package com.miguelsalamanca.nousbooks.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,13 +35,19 @@ public class BookController {
         return bookService.search(q);
     }
 
+    // Books are added to the catalogue lazily via the Google Books integration
+    // (see UserBookService.createUserBook). The manual create/list endpoints are
+    // admin-only escape hatches — regular users have no business poking at the
+    // global catalogue.
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public BookDto create(@RequestBody CreateBookRequest request) {
         Book saved = bookService.createBook(request);
         return bookMapper.toDto(saved);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<BookDto> getAll() {
         return bookService.getAllBooks()
                 .stream()
