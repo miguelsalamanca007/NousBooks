@@ -36,7 +36,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     @Value("${app.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+    private List<String> allowedOriginPatterns;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -78,7 +78,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(allowedOrigins);
+        // setAllowedOriginPatterns supports wildcards AND works with allowCredentials=true
+        config.setAllowedOriginPatterns(allowedOriginPatterns);
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
