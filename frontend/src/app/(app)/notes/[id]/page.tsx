@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notesApi } from "@/lib/api";
 
 export default function NoteDetailPage() {
+  const [, startTransition] = useTransition();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -25,110 +26,16 @@ export default function NoteDetailPage() {
   // after auto-save doesn't clobber what the user is currently typing.
   useEffect(() => {
     if (!note) return;
-    setTitle(note.title ?? "");
-    setContent(note.content);
+    startTransition(() => {
+      setTitle(note.title ?? "");
+      setContent(note.content);
+    });
   }, [note?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep the textarea height in sync with the content — grows as you type.
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
-    el.style.height = "auto";
-    el.style.height = el.scrollHeight + "px";
-  }, [content]);
-
-  const updateNote = useMutation({
-    mutationFn: (data: { title?: string; content?: string }) =>
-      notesApi.update(Number(id), data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["note", id] });
-      queryClient.invalidateQueries({ queryKey: ["myNotes"] });
-    },
-  });
-
-  const deleteNote = useMutation({
-    mutationFn: () => notesApi.remove(Number(id)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myNotes"] });
-      router.push("/notes");
-    },
-  });
-
-  if (isLoading) return <p className="text-sm text-zinc-400">Loading…</p>;
-  if (!note) return <p className="text-sm text-zinc-400">Note not found.</p>;
-
-  return (
-    <div className="mx-auto max-w-2xl">
-
-      {/* Back + Delete */}
-      <div className="mb-8 flex items-center justify-between">
-        <button
-          onClick={() => router.push("/notes")}
-          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
-        >
-          ← Back
-        </button>
-
-        <div className="flex items-center gap-3">
-          {updateNote.isPending && (
-            <span className="text-xs text-zinc-400">Saving…</span>
-          )}
-          <button
-            onClick={() => {
-              if (confirm("Delete this note?")) deleteNote.mutate();
-            }}
-            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-
-      {/* Title — click to edit, auto-save on blur */}
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        onBlur={() => {
-          if (title !== (note.title ?? "")) {
-            updateNote.mutate({ title: title.trim() || undefined });
-          }
-        }}
-        onKeyDown={(e) => {
-          // Tab / Enter → jump to the content area
-          if (e.key === "Enter" || e.key === "Tab") {
-            e.preventDefault();
-            contentRef.current?.focus();
-          }
-        }}
-        placeholder="Untitled"
-        className="mb-2 w-full bg-transparent text-3xl font-semibold text-zinc-800 outline-none placeholder:text-zinc-300"
-      />
-
-      {/* Metadata */}
-      <p className="mb-8 text-sm text-zinc-400">
-        {note.bookTitle && <span>{note.bookTitle} · </span>}
-        {new Date(note.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </p>
-
-      {/* Content — click to edit, auto-grows, auto-save on blur */}
-      <textarea
-        ref={contentRef}
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onBlur={() => {
-          if (content !== note.content) {
-            updateNote.mutate({ content });
-          }
-        }}
-        placeholder="Write something…"
-        rows={1}
-        className="w-full resize-none bg-transparent text-base leading-relaxed text-zinc-700 outline-none placeholder:text-zinc-300"
-      />
-
-    </div>
-  );
-}
+      setTitle(note.title ?? "");
+      setContent(note.content);
+    });

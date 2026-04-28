@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { notesApi, userBooksApi } from "@/lib/api";
 import { UserBook } from "@/types";
@@ -14,6 +14,7 @@ interface Props {
 
 export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
   const queryClient = useQueryClient();
+  const [, startTransition] = useTransition();
 
   const [bookId, setBookId] = useState<number | "">("");
   const [title, setTitle] = useState("");
@@ -31,10 +32,12 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
   // Reset form whenever the modal is opened/closed or the default changes.
   useEffect(() => {
     if (open) {
-      setBookId(defaultBookId ?? "");
-      setTitle("");
-      setContent("");
-      setError(null);
+      startTransition(() => {
+        setBookId(defaultBookId ?? "");
+        setTitle("");
+        setContent("");
+        setError(null);
+      });
     }
   }, [open, defaultBookId]);
 
@@ -141,7 +144,7 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-red-500 px-4 py-2 text-sm text-red-400 hover:bg-red-50"
+              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-500 hover:bg-zinc-100"
             >
               Cancel
             </button>

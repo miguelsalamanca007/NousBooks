@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
-import { ReadingStatus, STATUS_COLORS, STATUS_LABELS } from "@/types";
+import { STATUS_COLORS, STATUS_LABELS } from "@/types";
 
 export default function MyBooksPage() {
   const queryClient = useQueryClient();
