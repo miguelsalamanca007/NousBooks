@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import BookIcon from "@/components/BookIcon";
+import { BookSearchResult } from "@/types";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Home" },
@@ -15,6 +16,67 @@ const NAV_LINKS = [
   { href: "/notes", label: "My Notes" },
   { href: "/stats", label: "Stats" },
 ];
+
+// ── ResultsDropdown ──────────────────────────────────────────────────────────
+// Declared outside the Navbar component because Next 16's react-hooks rules
+// reject components defined in render bodies — they would lose state on every
+// parent render. This is purely presentational; all state lives in Navbar and
+// is passed in via props.
+function ResultsDropdown({
+  results,
+  isFetching,
+  onAdd,
+}: {
+  results: BookSearchResult[];
+  isFetching: boolean;
+  onAdd: (googleBooksId: string) => void;
+}) {
+  return (
+    <div className="absolute left-0 right-0 top-full mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg z-50">
+      {isFetching && (
+        <p className="px-4 py-3 text-sm text-zinc-400">Searching…</p>
+      )}
+      {!isFetching && results.length === 0 && (
+        <p className="px-4 py-3 text-sm text-zinc-400">No results</p>
+      )}
+      {results.slice(0, 6).map((book) => (
+        <div
+          key={book.googleBooksId}
+          className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50"
+        >
+          {book.thumbnail ? (
+            <Image
+              src={book.thumbnail}
+              alt={book.title}
+              width={28}
+              height={40}
+              unoptimized
+              className="h-10 w-7 shrink-0 rounded object-cover"
+            />
+          ) : (
+            <div className="h-10 w-7 shrink-0 rounded bg-zinc-100" />
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-zinc-600">
+              {book.title}
+            </p>
+            {book.authors?.length > 0 && (
+              <p className="truncate text-xs text-zinc-400">
+                {book.authors[0]}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={() => onAdd(book.googleBooksId)}
+            className="shrink-0 rounded-full border border-zinc-400 px-2.5 py-1 text-xs font-semibold text-zinc-800 hover:bg-amber-100"
+          >
+            + Add
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -58,12 +120,10 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close mobile panels on route change
-  useEffect(() => {
-    setMenuOpen(false);
-    setMobileSearchOpen(false);
-    setQuery("");
-  }, [pathname]);
+  // NOTE: closing mobile panels on route change is handled via onClick on each
+  // Link, not a useEffect on `pathname`. Next 16's react-hooks rules forbid
+  // synchronous setState inside an effect because it triggers cascading
+  // renders.
 
   const { data: results = [], isFetching } = useQuery({
     queryKey: ["bookSearch", debouncedQuery],
@@ -92,58 +152,18 @@ export default function Navbar() {
     router.push("/login");
   }
 
+  function closeMobilePanels() {
+    setMenuOpen(false);
+    setMobileSearchOpen(false);
+    setQuery("");
+  }
+
   const navLinkClass = (href: string) =>
     `text-base font-medium transition-colors ${
       pathname === href ? "text-zinc-900" : "text-zinc-600 hover:text-zinc-900"
     }`;
 
-  // Shared results dropdown content — used in both desktop and mobile search
-  const ResultsDropdown = () =>
-    open && debouncedQuery.length > 2 ? (
-      <div className="absolute left-0 right-0 top-full mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg z-50">
-        {isFetching && (
-          <p className="px-4 py-3 text-sm text-zinc-400">Searching…</p>
-        )}
-        {!isFetching && results.length === 0 && (
-          <p className="px-4 py-3 text-sm text-zinc-400">No results</p>
-        )}
-        {results.slice(0, 6).map((book) => (
-          <div
-            key={book.googleBooksId}
-            className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50"
-          >
-            {book.thumbnail ? (
-              <Image
-                src={book.thumbnail}
-                alt={book.title}
-                width={28}
-                height={40}
-                unoptimized
-                className="h-10 w-7 shrink-0 rounded object-cover"
-              />
-            ) : (
-              <div className="h-10 w-7 shrink-0 rounded bg-zinc-100" />
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-zinc-600">
-                {book.title}
-              </p>
-              {book.authors?.length > 0 && (
-                <p className="truncate text-xs text-zinc-400">
-                  {book.authors[0]}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => handleAddBook(book.googleBooksId)}
-              className="shrink-0 rounded-full border border-zinc-400 px-2.5 py-1 text-xs font-semibold text-zinc-800 hover:bg-amber-100"
-            >
-              + Add
-            </button>
-          </div>
-        ))}
-      </div>
-    ) : null;
+  const showDropdown = open && debouncedQuery.length > 2;
 
   return (
     <header className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
@@ -153,6 +173,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/dashboard"
+          onClick={closeMobilePanels}
           className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-black"
         >
           <BookIcon className="h-5 w-5" />
@@ -178,7 +199,13 @@ export default function Navbar() {
             aria-label="Search books"
             className="w-full rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400"
           />
-          <ResultsDropdown />
+          {showDropdown && (
+            <ResultsDropdown
+              results={results}
+              isFetching={isFetching}
+              onAdd={handleAddBook}
+            />
+          )}
         </div>
 
         {/* Desktop sign out */}
@@ -269,6 +296,7 @@ export default function Navbar() {
                   <Link
                     key={href}
                     href={href}
+                    onClick={closeMobilePanels}
                     className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                       pathname === href
                         ? "bg-amber-50 text-zinc-900"
@@ -304,7 +332,13 @@ export default function Navbar() {
               aria-label="Search books"
               className="w-full rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400"
             />
-            <ResultsDropdown />
+            {showDropdown && (
+              <ResultsDropdown
+                results={results}
+                isFetching={isFetching}
+                onAdd={handleAddBook}
+              />
+            )}
           </div>
         </div>
       )}
