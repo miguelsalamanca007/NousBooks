@@ -71,6 +71,14 @@ export const authApi = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
+
+  // Exchange a Google ID token (obtained on the frontend via Google Identity
+  // Services) for a backend-issued JWT.
+  google: (idToken: string) =>
+    request<AuthResponse>("/api/auth/google", {
+      method: "POST",
+      body: JSON.stringify({ idToken }),
+    }),
 };
 
 // ── Books ─────────────────────────────────────────────────────────────────────
