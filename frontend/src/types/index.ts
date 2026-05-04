@@ -52,3 +52,17 @@ export interface Note {
   content: string;
   createdAt: string;
 }
+
+export interface MonthlyCount {
+  month: string; // ISO YYYY-MM
+  count: number;
+}
+
+export interface Stats {
+  totalBooks: number;
+  booksByStatus: Record<ReadingStatus, number>;
+  totalNotes: number;
+  readThisYear: number;
+  finishedByMonth: MonthlyCount[];
+  memberSince: string;
+}

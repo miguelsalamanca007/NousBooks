@@ -79,6 +79,7 @@ export default function Navbar() {
           {navLink("/dashboard", "Home")}
           {navLink("/my-books", "My Books")}
           {navLink("/notes", "My Notes")}
+          {navLink("/stats", "Stats")}
         </nav>
 
         {/* Search */}
