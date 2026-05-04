@@ -47,10 +47,18 @@ export default function NotesPage() {
     router.push("/notes");
   }
 
+  function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
   return (
     <div>
       <div className="mb-5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-zinc-800">My Notes</h1>
 
           {/* Active book filter badge */}
@@ -70,7 +78,7 @@ export default function NotesPage() {
 
         <button
           onClick={() => setCreating(true)}
-          className="rounded-full bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700"
+          className="shrink-0 rounded-full bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700"
         >
           + New note
         </button>
@@ -102,38 +110,65 @@ export default function NotesPage() {
       />
 
       {filtered.length > 0 && (
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-zinc-200 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
-              <th className="pb-3 pr-6">Title</th>
-              <th className="pb-3 pr-6">Book</th>
-              <th className="pb-3">Date</th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          {/* Mobile: card list */}
+          <ul className="flex flex-col gap-3 sm:hidden">
             {filtered.map((note: Note) => (
-              <tr
+              <li
                 key={note.id}
                 onClick={() => router.push(`/notes/${note.id}`)}
-                className="cursor-pointer border-b border-zinc-100 hover:bg-zinc-50"
+                className="cursor-pointer rounded-xl border border-zinc-200 bg-white p-4 hover:bg-zinc-50"
               >
-                <td className="py-3 pr-6 font-medium text-zinc-800">
-                  {note.title || <span className="text-zinc-400 italic">Untitled</span>}
-                </td>
-                <td className="py-3 pr-6 text-zinc-500">
-                  {note.bookTitle || "—"}
-                </td>
-                <td className="py-3 text-zinc-400">
-                  {new Date(note.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </td>
-              </tr>
+                <p className="font-medium text-zinc-800 leading-snug">
+                  {note.title || (
+                    <span className="italic text-zinc-400">Untitled</span>
+                  )}
+                </p>
+                <div className="mt-1 flex items-center gap-2 text-xs text-zinc-400">
+                  {note.bookTitle && (
+                    <>
+                      <span className="truncate max-w-[140px] text-zinc-500">
+                        {note.bookTitle}
+                      </span>
+                      <span>·</span>
+                    </>
+                  )}
+                  <span>{formatDate(note.createdAt)}</span>
+                </div>
+              </li>
             ))}
-          </tbody>
-        </table>
+          </ul>
+
+          {/* Desktop: table */}
+          <table className="hidden w-full text-sm sm:table">
+            <thead>
+              <tr className="border-b border-zinc-200 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <th className="pb-3 pr-6">Title</th>
+                <th className="pb-3 pr-6">Book</th>
+                <th className="pb-3">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((note: Note) => (
+                <tr
+                  key={note.id}
+                  onClick={() => router.push(`/notes/${note.id}`)}
+                  className="cursor-pointer border-b border-zinc-100 hover:bg-zinc-50"
+                >
+                  <td className="py-3 pr-6 font-medium text-zinc-800">
+                    {note.title || (
+                      <span className="text-zinc-400 italic">Untitled</span>
+                    )}
+                  </td>
+                  <td className="py-3 pr-6 text-zinc-500">
+                    {note.bookTitle || "—"}
+                  </td>
+                  <td className="py-3 text-zinc-400">{formatDate(note.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );

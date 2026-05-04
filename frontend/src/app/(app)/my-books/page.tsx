@@ -35,8 +35,9 @@ export default function MyBooksPage() {
         {myBooks.map((ub) => (
           <li
             key={ub.id}
-            className="flex items-center gap-4 rounded-xl border border-zinc-200 bg-white p-4"
+            className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-3 sm:items-center sm:gap-4 sm:p-4"
           >
+            {/* Cover */}
             {ub.book.thumbnail ? (
               <Image
                 src={ub.book.thumbnail}
@@ -50,22 +51,41 @@ export default function MyBooksPage() {
               <div className="h-16 w-11 shrink-0 rounded bg-zinc-100" />
             )}
 
+            {/* Title + meta */}
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-zinc-700">{ub.book.title}</p>
+              <p className="font-medium text-zinc-700 leading-snug">
+                {ub.book.title}
+              </p>
               {ub.book.publishedDate && (
                 <p className="text-xs text-zinc-400">{ub.book.publishedDate}</p>
               )}
+
+              {/* On mobile, actions live below the title */}
+              <div className="mt-2 flex flex-wrap items-center gap-2 sm:hidden">
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}
+                >
+                  {STATUS_LABELS[ub.status]}
+                </span>
+                <Link
+                  href={`/notes?bookId=${ub.book.id}&bookTitle=${encodeURIComponent(ub.book.title)}`}
+                  className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+                >
+                  Notes
+                </Link>
+              </div>
             </div>
 
-            {/* Status pill */}
-            <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}>
+            {/* Desktop-only: status pill + notes + remove in a row */}
+            <span
+              className={`hidden sm:inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}
+            >
               {STATUS_LABELS[ub.status]}
             </span>
 
-            {/* Notes shortcut */}
             <Link
               href={`/notes?bookId=${ub.book.id}&bookTitle=${encodeURIComponent(ub.book.title)}`}
-              className="shrink-0 rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+              className="hidden sm:inline-flex shrink-0 rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
             >
               Notes
             </Link>
@@ -73,7 +93,7 @@ export default function MyBooksPage() {
             <button
               onClick={() => removeBook.mutate(ub.id)}
               aria-label={`Remove ${ub.book.title}`}
-              className="shrink-0 text-zinc-300 hover:text-red-400"
+              className="shrink-0 self-start text-zinc-300 hover:text-red-400 sm:self-auto"
             >
               ✕
             </button>
