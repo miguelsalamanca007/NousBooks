@@ -35,8 +35,19 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    // Nullable — OAuth users (Google) authenticate via their identity provider
+    // and have no local password.
+    @Column
     private String password;
+
+    // Google "sub" claim. Unique and stable per Google account; nullable for
+    // users registered with email/password only.
+    @Column(name = "google_id", unique = true)
+    private String googleId;
+
+    // Optional display name (provided by Google for OAuth users).
+    @Column
+    private String name;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

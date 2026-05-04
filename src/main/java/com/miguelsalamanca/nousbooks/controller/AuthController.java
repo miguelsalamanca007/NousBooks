@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 import com.miguelsalamanca.nousbooks.dto.AuthResponse;
+import com.miguelsalamanca.nousbooks.dto.GoogleAuthRequest;
 import com.miguelsalamanca.nousbooks.dto.LoginRequest;
 import com.miguelsalamanca.nousbooks.dto.RegisterRequest;
 import com.miguelsalamanca.nousbooks.service.AuthService;
@@ -30,5 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> google(@Valid @RequestBody GoogleAuthRequest request) {
+        return ResponseEntity.ok(authService.googleLogin(request));
     }
 }
