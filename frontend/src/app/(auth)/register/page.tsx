@@ -6,6 +6,7 @@ import Link from "next/link";
 import { authApi, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import BookIcon from "@/components/BookIcon";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -94,6 +95,15 @@ export default function RegisterPage() {
           {loading ? "Creating account…" : "Create account"}
         </button>
       </form>
+
+      {/* Divider + Google sign-in (same flow as login: account is created on
+          first Google sign-in if it doesn't exist yet) */}
+      <div className="my-5 flex items-center gap-3 text-xs text-zinc-400">
+        <div className="h-px flex-1 bg-zinc-200" />
+        <span>or</span>
+        <div className="h-px flex-1 bg-zinc-200" />
+      </div>
+      <GoogleSignInButton />
 
       <p className="mt-5 text-center text-sm text-zinc-500">
         Already have an account?{" "}

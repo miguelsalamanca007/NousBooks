@@ -6,6 +6,7 @@ import Link from "next/link";
 import { authApi, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import BookIcon from "@/components/BookIcon";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -84,6 +85,14 @@ export default function LoginPage() {
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
+
+      {/* Divider + Google sign-in */}
+      <div className="my-5 flex items-center gap-3 text-xs text-zinc-400">
+        <div className="h-px flex-1 bg-zinc-200" />
+        <span>or</span>
+        <div className="h-px flex-1 bg-zinc-200" />
+      </div>
+      <GoogleSignInButton />
 
       <p className="mt-5 text-center text-sm text-zinc-500">
         No account?{" "}
