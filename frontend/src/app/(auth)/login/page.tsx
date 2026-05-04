@@ -7,6 +7,7 @@ import { authApi, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 import BookIcon from "@/components/BookIcon";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import ColdStartNotice from "@/components/ColdStartNotice";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -45,6 +46,8 @@ export default function LoginPage() {
       </div>
     <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
       <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-600">Sign in</h1>
+
+      <ColdStartNotice />
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
