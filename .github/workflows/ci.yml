@@ -53,8 +53,6 @@ jobs:
         run: npm run lint
 
       - name: Build
+        # NEXT_PUBLIC_API_URL is read from .env.production (committed to the repo),
+        # so no extra env var is needed here.
         run: npm run build
-        env:
-          # Placeholder so Next.js doesn't fail the build without a real API URL.
-          # The real value is set as an environment variable in Vercel.
-          NEXT_PUBLIC_API_URL: http://localhost:8080
