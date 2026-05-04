@@ -24,4 +24,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     @EntityGraph(attributePaths = "book")
     Optional<Note> findByIdAndUserId(Long id, Long userId);
+
+    long countByUserId(Long userId);
 }

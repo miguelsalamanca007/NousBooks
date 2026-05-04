@@ -4,6 +4,7 @@ import {
   BookSearchResult,
   Note,
   ReadingStatus,
+  Stats,
   UserBook,
 } from "@/types";
 
@@ -136,4 +137,10 @@ export const notesApi = {
 
   remove: (id: number) =>
     request<void>(`/api/notes/${id}`, { method: "DELETE" }),
+};
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+
+export const statsApi = {
+  getMyStats: () => request<Stats>("/api/stats/me"),
 };
