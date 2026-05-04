@@ -30,6 +30,7 @@ export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [noteForBookId, setNoteForBookId] = useState<number | null>(null);
   const [activeBook, setActiveBook] = useState<UserBook | null>(null);
+  const [mobileTab, setMobileTab] = useState<ReadingStatus>("TO_READ");
 
   const { data: myBooks = [], isLoading } = useQuery({
     queryKey: ["myBooks"],
@@ -78,7 +79,60 @@ export default function DashboardPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid grid-cols-3 gap-6">
+      {/* ── Mobile tab bar ─────────────────────────────────────────────────── */}
+      <div className="mb-4 flex rounded-xl border border-zinc-200 bg-white p-1 md:hidden">
+        {COLUMNS.map(({ status, label }) => {
+          const count = myBooks.filter((ub) => ub.status === status).length;
+          return (
+            <button
+              key={status}
+              onClick={() => setMobileTab(status)}
+              className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors ${
+                mobileTab === status
+                  ? "bg-amber-100 text-amber-900"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              {label}
+              {count > 0 && (
+                <span className="ml-1 text-zinc-400">({count})</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Mobile: single active column ───────────────────────────────────── */}
+      <div className="md:hidden">
+        {COLUMNS.filter((c) => c.status === mobileTab).map(({ status, label }) => {
+          const books = myBooks.filter((ub) => ub.status === status);
+          return (
+            <Column key={status} status={status} label={label} hiddenHeader>
+              {books.length === 0 && (
+                <p className="py-8 text-center text-sm text-zinc-400">
+                  No books here yet.
+                </p>
+              )}
+              {books.map((ub) => (
+                <BookCard
+                  key={ub.id}
+                  ub={ub}
+                  onMove={(newStatus) => {
+                    updateBook.mutate({ id: ub.id, status: newStatus });
+                    setMobileTab(newStatus);
+                  }}
+                  onRemove={() => removeBook.mutate(ub.id)}
+                  onAddNote={() => setNoteForBookId(ub.book.id)}
+                  isDragging={false}
+                />
+              ))}
+            </Column>
+          );
+        })}
+      </div>
+
+      {/* ── Desktop: 3-column grid (drag & drop) ───────────────────────────── */}
+      <div className="hidden md:grid md:grid-cols-3 md:gap-6">
         {COLUMNS.map(({ status, label }) => {
           const books = myBooks.filter((ub) => ub.status === status);
           return (
@@ -120,10 +174,12 @@ function Column({
   status,
   label,
   children,
+  hiddenHeader = false,
 }: {
   status: ReadingStatus;
   label: string;
   children: React.ReactNode;
+  hiddenHeader?: boolean;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -134,13 +190,15 @@ function Column({
         isOver ? "bg-amber-100/60" : "bg-transparent"
       }`}
     >
-      {/* Column header: icon + label */}
-      <div className="mb-4 flex flex-col items-center gap-1 px-1">
-        <BookIcon className="h-8 w-8 text-zinc-400" />
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          {label}
-        </h2>
-      </div>
+      {/* Column header — hidden when tabs already show the label */}
+      {!hiddenHeader && (
+        <div className="mb-4 flex flex-col items-center gap-1 px-1">
+          <BookIcon className="h-8 w-8 text-zinc-400" />
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+            {label}
+          </h2>
+        </div>
+      )}
       <ul className="flex flex-col gap-3">{children}</ul>
     </div>
   );

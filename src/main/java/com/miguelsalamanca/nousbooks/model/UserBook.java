@@ -2,6 +2,8 @@ package com.miguelsalamanca.nousbooks.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.miguelsalamanca.nousbooks.enums.ReadingStatus;
 
 import jakarta.persistence.Column;
@@ -45,4 +47,10 @@ public class UserBook {
     private String review;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
+
+    // Set by Hibernate the first time the entity is persisted. Used by the
+    // stats endpoint as a fallback "added to library" timestamp.
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
