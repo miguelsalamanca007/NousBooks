@@ -22,8 +22,8 @@ import NewNoteModal from "@/components/NewNoteModal";
 
 const COLUMNS: { status: ReadingStatus; label: string }[] = [
   { status: "TO_READ", label: "Want to read" },
-  { status: "READ", label: "Read books" },
   { status: "READING", label: "Currently reading" },
+  { status: "READ", label: "Read books" },
 ];
 
 export default function DashboardPage() {
