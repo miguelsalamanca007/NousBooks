@@ -30,7 +30,7 @@ export default function MyBooksPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-zinc-800">My Books</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-zinc-800 dark:text-zinc-100">My Books</h1>
 
       {myBooks.length === 0 && (
         <p className="text-sm text-zinc-400">
@@ -42,7 +42,7 @@ export default function MyBooksPage() {
         {myBooks.map((ub) => (
           <li
             key={ub.id}
-            className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-3 sm:items-center sm:gap-4 sm:p-4"
+            className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-3 sm:items-center sm:gap-4 sm:p-4 dark:border-zinc-800 dark:bg-zinc-900"
           >
             {/* Cover */}
             {ub.book.thumbnail ? (
@@ -55,12 +55,12 @@ export default function MyBooksPage() {
                 className="h-16 w-11 shrink-0 rounded object-cover"
               />
             ) : (
-              <div className="h-16 w-11 shrink-0 rounded bg-zinc-100" />
+              <div className="h-16 w-11 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
             )}
 
             {/* Title + meta */}
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-zinc-700 leading-snug">
+              <p className="font-medium text-zinc-700 leading-snug dark:text-zinc-200">
                 {ub.book.title}
               </p>
               {ub.book.publishedDate && (
@@ -81,7 +81,7 @@ export default function MyBooksPage() {
                 </span>
                 <Link
                   href={`/notes?bookId=${ub.book.id}&bookTitle=${encodeURIComponent(ub.book.title)}`}
-                  className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+                  className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                 >
                   Notes
                 </Link>
@@ -105,7 +105,7 @@ export default function MyBooksPage() {
 
             <Link
               href={`/notes?bookId=${ub.book.id}&bookTitle=${encodeURIComponent(ub.book.title)}`}
-              className="hidden sm:inline-flex shrink-0 rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800"
+              className="hidden sm:inline-flex shrink-0 rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
             >
               Notes
             </Link>
@@ -113,7 +113,7 @@ export default function MyBooksPage() {
             <button
               onClick={() => removeBook.mutate(ub.id)}
               aria-label={`Remove ${ub.book.title}`}
-              className="shrink-0 self-start text-zinc-300 hover:text-red-400 sm:self-auto"
+              className="shrink-0 self-start text-zinc-300 hover:text-red-400 sm:self-auto dark:text-zinc-600 dark:hover:text-red-400"
             >
               ✕
             </button>

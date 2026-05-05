@@ -5,6 +5,7 @@ import {
   Note,
   ReadingStatus,
   Stats,
+  User,
   UserBook,
 } from "@/types";
 
@@ -143,4 +144,22 @@ export const notesApi = {
 
 export const statsApi = {
   getMyStats: () => request<Stats>("/api/stats/me"),
+};
+
+// ── User (self-service) ──────────────────────────────────────────────────────
+
+export const userApi = {
+  getMe: () => request<User>("/api/users/me"),
+
+  update: (data: { name?: string; email?: string }) =>
+    request<User>("/api/users/me", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  changePassword: (data: { currentPassword?: string; newPassword: string }) =>
+    request<void>("/api/users/me/password", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

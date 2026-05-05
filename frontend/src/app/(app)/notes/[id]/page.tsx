@@ -67,7 +67,7 @@ export default function NoteDetailPage() {
       <div className="mb-8 flex items-center justify-between">
         <button
           onClick={() => router.push("/notes")}
-          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800"
+          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
         >
           ← Back
         </button>
@@ -80,7 +80,7 @@ export default function NoteDetailPage() {
             onClick={() => {
               if (confirm("Delete this note?")) deleteNote.mutate();
             }}
-            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50"
+            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/30"
           >
             Delete
           </button>
@@ -103,7 +103,7 @@ export default function NoteDetailPage() {
           }
         }}
         placeholder="Untitled"
-        className="mb-2 w-full bg-transparent text-3xl font-semibold text-zinc-800 outline-none placeholder:text-zinc-300"
+        className="mb-2 w-full bg-transparent text-3xl font-semibold text-zinc-800 outline-none placeholder:text-zinc-300 dark:text-zinc-100 dark:placeholder:text-zinc-600"
       />
 
       {/* Metadata */}
@@ -128,7 +128,7 @@ export default function NoteDetailPage() {
         }}
         placeholder="Write something…"
         rows={1}
-        className="w-full resize-none bg-transparent text-base leading-relaxed text-zinc-700 outline-none placeholder:text-zinc-300"
+        className="w-full resize-none bg-transparent text-base leading-relaxed text-zinc-700 outline-none placeholder:text-zinc-300 dark:text-zinc-200 dark:placeholder:text-zinc-600"
       />
 
     </div>

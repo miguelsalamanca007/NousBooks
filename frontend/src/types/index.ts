@@ -2,6 +2,15 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface User {
+  id: number;
+  email: string;
+  name: string | null;
+  hasPassword: boolean;
+  hasGoogle: boolean;
+  createdAt: string;
+}
+
 export interface BookSearchResult {
   googleBooksId: string;
   title: string;

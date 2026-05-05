@@ -87,7 +87,7 @@ export default function DashboardPage() {
       onDragEnd={handleDragEnd}
     >
       {/* ── Mobile tab bar ─────────────────────────────────────────────────── */}
-      <div className="mb-4 flex rounded-xl border border-zinc-200 bg-white p-1 md:hidden">
+      <div className="mb-4 flex rounded-xl border border-zinc-200 bg-white p-1 md:hidden dark:border-zinc-800 dark:bg-zinc-900">
         {COLUMNS.map(({ status, label }) => {
           const count = myBooks.filter((ub) => ub.status === status).length;
           return (
@@ -96,8 +96,8 @@ export default function DashboardPage() {
               onClick={() => setMobileTab(status)}
               className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors ${
                 mobileTab === status
-                  ? "bg-amber-100 text-amber-900"
-                  : "text-zinc-500 hover:text-zinc-700"
+                  ? "bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200"
+                  : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
               {label}
@@ -196,14 +196,14 @@ function Column({
     <div
       ref={setNodeRef}
       className={`min-h-40 rounded-xl p-2 transition-colors ${
-        isOver ? "bg-amber-100/60" : "bg-transparent"
+        isOver ? "bg-amber-100/60 dark:bg-amber-900/20" : "bg-transparent"
       }`}
     >
       {/* Column header — hidden when tabs already show the label */}
       {!hiddenHeader && (
         <div className="mb-4 flex flex-col items-center gap-1 px-1">
-          <BookIcon className="h-8 w-8 text-zinc-400" />
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+          <BookIcon className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             {label}
           </h2>
         </div>
@@ -246,10 +246,10 @@ function BookCard({
       style={style}
       {...attributes}
       {...listeners}
-      className={`group relative flex gap-3 rounded-xl border bg-white p-3 transition-opacity select-none cursor-grab active:cursor-grabbing ${
+      className={`group relative flex gap-3 rounded-xl border bg-white p-3 transition-opacity select-none cursor-grab active:cursor-grabbing dark:bg-zinc-900 ${
         isDragging
-          ? "opacity-40 border-zinc-300"
-          : "border-zinc-200 opacity-100"
+          ? "opacity-40 border-zinc-300 dark:border-zinc-700"
+          : "border-zinc-200 opacity-100 dark:border-zinc-800"
       }`}
     >
       {ub.book.thumbnail ? (
@@ -266,7 +266,7 @@ function BookCard({
       )}
 
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-600 cursor-default">
+        <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-700 cursor-default dark:text-zinc-200">
           {ub.book.title}
         </p>
 
@@ -283,14 +283,14 @@ function BookCard({
             <button
               key={c.status}
               onClick={() => onMove(c.status)}
-              className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 hover:bg-zinc-200 cursor-pointer"
+              className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 hover:bg-zinc-200 cursor-pointer dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
             >
               → {c.label}
             </button>
           ))}
           <button
             onClick={onAddNote}
-            className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 hover:bg-amber-200 cursor-pointer"
+            className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 hover:bg-amber-200 cursor-pointer dark:bg-amber-950/50 dark:text-amber-200 dark:hover:bg-amber-900/60"
           >
             + Note
           </button>
@@ -299,7 +299,7 @@ function BookCard({
 
       <button
         onClick={onRemove}
-        className="absolute right-2 top-2 hidden text-zinc-300 hover:text-red-400 group-hover:block cursor-pointer"
+        className="absolute right-2 top-2 hidden text-zinc-300 hover:text-red-400 group-hover:block cursor-pointer dark:text-zinc-600 dark:hover:text-red-400"
         title="Remove"
       >
         ✕
@@ -312,7 +312,7 @@ function BookCard({
 
 function BookCardStatic({ ub }: { ub: UserBook }) {
   return (
-    <li className="flex gap-3 rounded-xl border border-amber-300 bg-white p-3 shadow-lg rotate-1">
+    <li className="flex gap-3 rounded-xl border border-amber-300 bg-white p-3 shadow-lg rotate-1 dark:border-amber-700 dark:bg-zinc-900">
       {ub.book.thumbnail ? (
         <Image
           src={ub.book.thumbnail}
@@ -323,10 +323,10 @@ function BookCardStatic({ ub }: { ub: UserBook }) {
           className="h-16 w-11 shrink-0 rounded object-cover"
         />
       ) : (
-        <div className="h-16 w-11 shrink-0 rounded bg-zinc-100" />
+        <div className="h-16 w-11 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
       )}
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-600">
+        <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-700 dark:text-zinc-200">
           {ub.book.title}
         </p>
       </div>
