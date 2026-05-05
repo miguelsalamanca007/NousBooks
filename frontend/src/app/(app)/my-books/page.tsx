@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
 import { STATUS_COLORS, STATUS_LABELS } from "@/types";
+import StarRating from "@/components/StarRating";
 
 export default function MyBooksPage() {
   const queryClient = useQueryClient();
@@ -16,6 +17,12 @@ export default function MyBooksPage() {
 
   const removeBook = useMutation({
     mutationFn: (id: number) => userBooksApi.remove(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["myBooks"] }),
+  });
+
+  const rateBook = useMutation({
+    mutationFn: ({ id, rating }: { id: number; rating: number | null }) =>
+      userBooksApi.update(id, { rating: rating ?? undefined }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["myBooks"] }),
   });
 
@@ -62,6 +69,11 @@ export default function MyBooksPage() {
 
               {/* On mobile, actions live below the title */}
               <div className="mt-2 flex flex-wrap items-center gap-2 sm:hidden">
+                <StarRating
+                  value={ub.rating}
+                  onChange={(rating) => rateBook.mutate({ id: ub.id, rating })}
+                  size="sm"
+                />
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}
                 >
@@ -76,7 +88,15 @@ export default function MyBooksPage() {
               </div>
             </div>
 
-            {/* Desktop-only: status pill + notes + remove in a row */}
+            {/* Desktop-only: rating + status pill + notes + remove in a row */}
+            <div className="hidden sm:block">
+              <StarRating
+                value={ub.rating}
+                onChange={(rating) => rateBook.mutate({ id: ub.id, rating })}
+                size="sm"
+              />
+            </div>
+
             <span
               className={`hidden sm:inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}
             >
