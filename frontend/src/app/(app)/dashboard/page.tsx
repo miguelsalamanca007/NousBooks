@@ -19,6 +19,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
 import { ReadingStatus, UserBook } from "@/types";
 import NewNoteModal from "@/components/NewNoteModal";
+import StarRating from "@/components/StarRating";
 
 const COLUMNS: { status: ReadingStatus; label: string }[] = [
   { status: "TO_READ", label: "Want to read" },
@@ -40,6 +41,12 @@ export default function DashboardPage() {
   const updateBook = useMutation({
     mutationFn: ({ id, status }: { id: number; status: ReadingStatus }) =>
       userBooksApi.update(id, { status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["myBooks"] }),
+  });
+
+  const rateBook = useMutation({
+    mutationFn: ({ id, rating }: { id: number; rating: number | null }) =>
+      userBooksApi.update(id, { rating: rating ?? undefined }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["myBooks"] }),
   });
 
@@ -123,6 +130,7 @@ export default function DashboardPage() {
                   }}
                   onRemove={() => removeBook.mutate(ub.id)}
                   onAddNote={() => setNoteForBookId(ub.book.id)}
+                  onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
                   isDragging={false}
                 />
               ))}
@@ -146,6 +154,7 @@ export default function DashboardPage() {
                   }
                   onRemove={() => removeBook.mutate(ub.id)}
                   onAddNote={() => setNoteForBookId(ub.book.id)}
+                  onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
                   isDragging={activeBook?.id === ub.id}
                 />
               ))}
@@ -211,12 +220,14 @@ function BookCard({
   onMove,
   onRemove,
   onAddNote,
+  onRate,
   isDragging,
 }: {
   ub: UserBook;
   onMove: (s: ReadingStatus) => void;
   onRemove: () => void;
   onAddNote: () => void;
+  onRate: (rating: number | null) => void;
   isDragging: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -258,6 +269,14 @@ function BookCard({
         <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-600 cursor-default">
           {ub.book.title}
         </p>
+
+        {/* Star rating — stop drag events so clicking stars doesn't drag */}
+        <div
+          className="mt-1.5"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <StarRating value={ub.rating} onChange={onRate} size="sm" />
+        </div>
 
         <div className="mt-2 flex flex-wrap gap-1">
           {others.map((c) => (
