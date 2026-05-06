@@ -21,7 +21,7 @@ public class Book {
     private String googleBooksId;
     @Column(length = 500)
     private String title;
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String description;
     @Column(columnDefinition = "TEXT")
     private String thumbnail;
