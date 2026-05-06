@@ -39,7 +39,7 @@ public class GoogleBooksClient {
         // string or override our `key=` parameter.
         String uri = UriComponentsBuilder.fromPath("/volumes")
                 .queryParam("q", query)
-                .queryParam("maxResults", 20)
+                .queryParam("maxResults", 40)
                 .queryParam("printType", "books")
                 .queryParamIfPresent("key", apiKeyAsOptional())
                 .build()

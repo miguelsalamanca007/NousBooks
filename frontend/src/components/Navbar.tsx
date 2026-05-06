@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
 import BookIcon from "@/components/BookIcon";
@@ -25,11 +25,15 @@ const NAV_LINKS = [
 function ResultsDropdown({
   results,
   isFetching,
+  query,
   onAdd,
+  onSeeAll,
 }: {
   results: BookSearchResult[];
   isFetching: boolean;
+  query: string;
   onAdd: (googleBooksId: string) => void;
+  onSeeAll: () => void;
 }) {
   return (
     <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
@@ -74,12 +78,37 @@ function ResultsDropdown({
           </button>
         </div>
       ))}
+      {!isFetching && results.length > 0 && (
+        <div className="border-t border-zinc-100 px-4 py-2.5 dark:border-zinc-800">
+          <button
+            onClick={onSeeAll}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40"
+          >
+            See all results for &ldquo;{query}&rdquo;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.8}
+              stroke="currentColor"
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const [query, setQuery] = useState("");
@@ -139,6 +168,12 @@ export default function Navbar() {
     setMobileSearchOpen(false);
   }
 
+  function handleSeeAll() {
+    setOpen(false);
+    setMobileSearchOpen(false);
+    router.push(`/search?q=${encodeURIComponent(debouncedQuery)}`);
+  }
+
   function closeMobilePanels() {
     setMenuOpen(false);
     setMobileSearchOpen(false);
@@ -192,7 +227,9 @@ export default function Navbar() {
             <ResultsDropdown
               results={results}
               isFetching={isFetching}
+              query={debouncedQuery}
               onAdd={handleAddBook}
+              onSeeAll={handleSeeAll}
             />
           )}
         </div>
@@ -305,7 +342,9 @@ export default function Navbar() {
               <ResultsDropdown
                 results={results}
                 isFetching={isFetching}
+                query={debouncedQuery}
                 onAdd={handleAddBook}
+                onSeeAll={handleSeeAll}
               />
             )}
           </div>
