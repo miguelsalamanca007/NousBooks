@@ -9,7 +9,7 @@ interface Props {
   title: string;
   children: React.ReactNode;
   /** Width tier — most modals are fine with the default `md`. */
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }
 
 /**
@@ -47,7 +47,7 @@ export default function Modal({
   // separate "mounted" guard around createPortal.
   if (!open || typeof document === "undefined") return null;
 
-  const widthClass = size === "sm" ? "max-w-sm" : "max-w-lg";
+  const widthClass = size === "sm" ? "max-w-sm" : size === "lg" ? "max-w-2xl" : "max-w-lg";
 
   const overlay = (
     <div

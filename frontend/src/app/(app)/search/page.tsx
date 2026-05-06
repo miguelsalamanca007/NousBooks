@@ -1,17 +1,170 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
 import { BookSearchResult } from "@/types";
+import Modal from "@/components/Modal";
+
+// Google Books thumbnails default to zoom=1 (small). zoom=0 returns a
+// substantially larger cover — good enough to compare against a physical book.
+function largeThumb(url: string) {
+  return url.replace(/zoom=\d/, "zoom=0").replace(/&edge=curl/, "");
+}
+
+function BookDetailModal({
+  book,
+  onClose,
+  isAdding,
+  onAdd,
+}: {
+  book: BookSearchResult;
+  onClose: () => void;
+  isAdding: boolean;
+  onAdd: () => void;
+}) {
+  return (
+    <Modal open title={book.title} onClose={onClose} size="lg">
+      <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
+        {/* Cover */}
+        <div className="flex shrink-0 justify-center sm:justify-start">
+          {book.thumbnail ? (
+            <Image
+              src={largeThumb(book.thumbnail)}
+              alt={book.title}
+              width={160}
+              height={230}
+              unoptimized
+              className="rounded-lg object-cover shadow-md"
+              style={{ width: 160, height: "auto" }}
+            />
+          ) : (
+            <div className="flex h-[230px] w-[160px] items-center justify-center rounded-lg bg-zinc-100 text-zinc-400 dark:bg-zinc-800">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-12 w-12"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        {/* Details */}
+        <div className="min-w-0 flex-1">
+          {book.authors?.length > 0 && (
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+              {book.authors.join(", ")}
+            </p>
+          )}
+
+          {book.publishedDate && (
+            <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+              {book.publishedDate.slice(0, 4)}
+            </p>
+          )}
+
+          {book.description ? (
+            <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+              {book.description}
+            </p>
+          ) : (
+            <p className="mt-4 text-sm italic text-zinc-400 dark:text-zinc-500">
+              No description available.
+            </p>
+          )}
+
+          <button
+            onClick={onAdd}
+            disabled={isAdding}
+            className="mt-6 rounded-full border border-zinc-300 px-4 py-1.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
+          >
+            {isAdding ? "Adding…" : "+ Add to library"}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function BookResultCard({
+  book,
+  isAdding,
+  onAdd,
+  onOpenDetail,
+}: {
+  book: BookSearchResult;
+  isAdding: boolean;
+  onAdd: () => void;
+  onOpenDetail: () => void;
+}) {
+  return (
+    <div className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+      {book.thumbnail ? (
+        <Image
+          src={book.thumbnail}
+          alt={book.title}
+          width={48}
+          height={70}
+          unoptimized
+          className="h-[70px] w-12 shrink-0 rounded object-cover"
+        />
+      ) : (
+        <div className="h-[70px] w-12 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+      )}
+
+      <div className="min-w-0 flex-1">
+        <button
+          onClick={onOpenDetail}
+          className="line-clamp-2 text-left text-sm font-semibold leading-snug text-zinc-800 hover:text-amber-700 hover:underline dark:text-zinc-100 dark:hover:text-amber-400"
+        >
+          {book.title}
+        </button>
+        {book.authors?.length > 0 && (
+          <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+            {book.authors.join(", ")}
+          </p>
+        )}
+        {book.publishedDate && (
+          <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+            {book.publishedDate.slice(0, 4)}
+          </p>
+        )}
+        {book.description && (
+          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {book.description}
+          </p>
+        )}
+
+        <button
+          onClick={onAdd}
+          disabled={isAdding}
+          className="mt-3 rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
+        >
+          {isAdding ? "Adding…" : "+ Add to library"}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function SearchResults() {
   const params = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
   const q = params.get("q") ?? "";
+
+  const [selectedBook, setSelectedBook] = useState<BookSearchResult | null>(null);
 
   const { data: results = [], isFetching, isError } = useQuery({
     queryKey: ["bookSearch", q],
@@ -26,6 +179,11 @@ function SearchResults() {
       queryClient.invalidateQueries({ queryKey: ["myBooks"] });
     },
   });
+
+  function handleAdd(googleBooksId: string) {
+    addBook.mutate(googleBooksId);
+    setSelectedBook(null);
+  }
 
   return (
     <div>
@@ -107,68 +265,22 @@ function SearchResults() {
                 key={book.googleBooksId}
                 book={book}
                 isAdding={addBook.isPending && addBook.variables === book.googleBooksId}
-                onAdd={() => addBook.mutate(book.googleBooksId)}
+                onAdd={() => handleAdd(book.googleBooksId)}
+                onOpenDetail={() => setSelectedBook(book)}
               />
             ))}
           </div>
         </>
       )}
-    </div>
-  );
-}
 
-function BookResultCard({
-  book,
-  isAdding,
-  onAdd,
-}: {
-  book: BookSearchResult;
-  isAdding: boolean;
-  onAdd: () => void;
-}) {
-  return (
-    <div className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-      {book.thumbnail ? (
-        <Image
-          src={book.thumbnail}
-          alt={book.title}
-          width={48}
-          height={70}
-          unoptimized
-          className="h-[70px] w-12 shrink-0 rounded object-cover"
+      {selectedBook && (
+        <BookDetailModal
+          book={selectedBook}
+          onClose={() => setSelectedBook(null)}
+          isAdding={addBook.isPending && addBook.variables === selectedBook.googleBooksId}
+          onAdd={() => handleAdd(selectedBook.googleBooksId)}
         />
-      ) : (
-        <div className="h-[70px] w-12 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
       )}
-
-      <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-semibold leading-snug text-zinc-800 dark:text-zinc-100">
-          {book.title}
-        </p>
-        {book.authors?.length > 0 && (
-          <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
-            {book.authors.join(", ")}
-          </p>
-        )}
-        {book.publishedDate && (
-          <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-            {book.publishedDate.slice(0, 4)}
-          </p>
-        )}
-        {book.description && (
-          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {book.description}
-          </p>
-        )}
-
-        <button
-          onClick={onAdd}
-          disabled={isAdding}
-          className="mt-3 rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
-        >
-          {isAdding ? "Adding…" : "+ Add to library"}
-        </button>
-      </div>
     </div>
   );
 }
