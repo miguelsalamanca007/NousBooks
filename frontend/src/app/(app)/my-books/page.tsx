@@ -5,14 +5,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
-import { STATUS_COLORS, STATUS_LABELS } from "@/types";
+import { Book, STATUS_COLORS, STATUS_LABELS } from "@/types";
 import StarRating from "@/components/StarRating";
 import ProgressBar from "@/components/ProgressBar";
 import UpdateProgressModal from "@/components/UpdateProgressModal";
+import BookDetailModal from "@/components/BookDetailModal";
 
 export default function MyBooksPage() {
   const queryClient = useQueryClient();
   const [progressForId, setProgressForId] = useState<number | null>(null);
+  const [detailBook, setDetailBook] = useState<Book | null>(null);
 
   const { data: myBooks = [], isLoading } = useQuery({
     queryKey: ["myBooks"],
@@ -64,9 +66,12 @@ export default function MyBooksPage() {
 
             {/* Title + meta */}
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-zinc-700 leading-snug dark:text-zinc-200">
+              <button
+                onClick={() => setDetailBook(ub.book)}
+                className="text-left font-medium leading-snug text-zinc-700 hover:text-amber-700 hover:underline dark:text-zinc-200 dark:hover:text-amber-400"
+              >
                 {ub.book.title}
-              </p>
+              </button>
               {ub.book.publishedDate && (
                 <p className="text-xs text-zinc-400">{ub.book.publishedDate}</p>
               )}
@@ -144,6 +149,13 @@ export default function MyBooksPage() {
         onClose={() => setProgressForId(null)}
         userBook={myBooks.find((ub) => ub.id === progressForId) ?? null}
       />
+
+      {detailBook && (
+        <BookDetailModal
+          book={detailBook}
+          onClose={() => setDetailBook(null)}
+        />
+      )}
     </div>
   );
 }
