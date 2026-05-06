@@ -82,20 +82,20 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
         aria-modal="true"
         aria-labelledby="new-note-modal-title"
         onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900"
       >
-        <h2 id="new-note-modal-title" className="mb-4 text-xl font-semibold text-zinc-600">New note</h2>
+        <h2 id="new-note-modal-title" className="mb-4 text-xl font-semibold text-zinc-600 dark:text-zinc-200">New note</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Book selector */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-zinc-700">Book</label>
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Book</label>
             <select
               value={bookId}
               onChange={(e) =>
                 setBookId(e.target.value ? Number(e.target.value) : "")
               }
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 text-zinc-500"
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             >
               <option value="">Select a book…</option>
               {myBooks.map((ub: UserBook) => (
@@ -112,30 +112,30 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-zinc-700">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Title <span className="text-zinc-400">(optional)</span>
             </label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 text-zinc-500"
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-zinc-700">Content</label>
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Content</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={6}
               required
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm leading-relaxed outline-none focus:border-zinc-500 text-zinc-500"
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm leading-relaxed text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             />
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-300">
               {error}
             </p>
           )}
@@ -144,14 +144,14 @@ export default function NewNoteModal({ open, onClose, defaultBookId }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-500 hover:bg-zinc-100"
+              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createNote.isPending}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
             >
               {createNote.isPending ? "Saving…" : "Save note"}
             </button>

@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
-import { useAuthStore } from "@/store/auth";
 import BookIcon from "@/components/BookIcon";
+import UserMenu from "@/components/UserMenu";
 import { BookSearchResult } from "@/types";
 
 const NAV_LINKS = [
@@ -32,7 +32,7 @@ function ResultsDropdown({
   onAdd: (googleBooksId: string) => void;
 }) {
   return (
-    <div className="absolute left-0 right-0 top-full mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg z-50">
+    <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
       {isFetching && (
         <p className="px-4 py-3 text-sm text-zinc-400">Searching…</p>
       )}
@@ -42,7 +42,7 @@ function ResultsDropdown({
       {results.slice(0, 6).map((book) => (
         <div
           key={book.googleBooksId}
-          className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50"
+          className="flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
           {book.thumbnail ? (
             <Image
@@ -54,10 +54,10 @@ function ResultsDropdown({
               className="h-10 w-7 shrink-0 rounded object-cover"
             />
           ) : (
-            <div className="h-10 w-7 shrink-0 rounded bg-zinc-100" />
+            <div className="h-10 w-7 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-zinc-600">
+            <p className="truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">
               {book.title}
             </p>
             {book.authors?.length > 0 && (
@@ -68,7 +68,7 @@ function ResultsDropdown({
           </div>
           <button
             onClick={() => onAdd(book.googleBooksId)}
-            className="shrink-0 rounded-full border border-zinc-400 px-2.5 py-1 text-xs font-semibold text-zinc-800 hover:bg-amber-100"
+            className="shrink-0 rounded-full border border-zinc-400 px-2.5 py-1 text-xs font-semibold text-zinc-800 hover:bg-amber-100 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
           >
             + Add
           </button>
@@ -80,8 +80,6 @@ function ResultsDropdown({
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const logout = useAuthStore((s) => s.logout);
   const queryClient = useQueryClient();
 
   const [query, setQuery] = useState("");
@@ -120,11 +118,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // NOTE: closing mobile panels on route change is handled via onClick on each
-  // Link, not a useEffect on `pathname`. Next 16's react-hooks rules forbid
-  // synchronous setState inside an effect because it triggers cascading
-  // renders.
-
   const { data: results = [], isFetching } = useQuery({
     queryKey: ["bookSearch", debouncedQuery],
     queryFn: () => booksApi.search(debouncedQuery),
@@ -146,12 +139,6 @@ export default function Navbar() {
     setMobileSearchOpen(false);
   }
 
-  function handleSignOut() {
-    queryClient.clear();
-    logout();
-    router.push("/login");
-  }
-
   function closeMobilePanels() {
     setMenuOpen(false);
     setMobileSearchOpen(false);
@@ -160,13 +147,15 @@ export default function Navbar() {
 
   const navLinkClass = (href: string) =>
     `text-base font-medium transition-colors ${
-      pathname === href ? "text-zinc-900" : "text-zinc-600 hover:text-zinc-900"
+      pathname === href
+        ? "text-zinc-900 dark:text-zinc-100"
+        : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
     }`;
 
   const showDropdown = open && debouncedQuery.length > 2;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80">
       {/* ── Main row ─────────────────────────────────────────────────────────── */}
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-4 px-4 sm:gap-6 sm:px-6">
 
@@ -174,14 +163,14 @@ export default function Navbar() {
         <Link
           href="/dashboard"
           onClick={closeMobilePanels}
-          className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-black"
+          className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-black dark:text-zinc-100"
         >
           <BookIcon className="h-5 w-5" />
           <span>Nous Books</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-5">
+        <nav className="hidden items-center gap-5 md:flex">
           {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} className={navLinkClass(href)}>
               {label}
@@ -197,7 +186,7 @@ export default function Navbar() {
             onFocus={() => query.length > 2 && setOpen(true)}
             placeholder="Search..."
             aria-label="Search books"
-            className="w-full rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400"
+            className="w-full rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
           />
           {showDropdown && (
             <ResultsDropdown
@@ -208,26 +197,10 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Desktop sign out */}
-        <button
-          onClick={handleSignOut}
-          aria-label="Sign out"
-          className="hidden md:block shrink-0 rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            className="h-6 w-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        {/* Desktop user menu */}
+        <div className="hidden md:block">
+          <UserMenu />
+        </div>
 
         {/* Mobile right controls */}
         <div className="ml-auto flex items-center gap-1 md:hidden">
@@ -235,7 +208,7 @@ export default function Navbar() {
           <button
             onClick={() => { setMobileSearchOpen((v) => !v); setMenuOpen(false); }}
             aria-label="Search"
-            className="rounded-full p-2 text-zinc-500 hover:bg-zinc-100"
+            className="rounded-full p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -253,12 +226,15 @@ export default function Navbar() {
             </svg>
           </button>
 
-          {/* Hamburger */}
+          {/* User menu (avatar) */}
+          <UserMenu />
+
+          {/* Hamburger — nav links only on mobile */}
           <div ref={menuRef} className="relative">
             <button
               onClick={() => { setMenuOpen((v) => !v); setMobileSearchOpen(false); }}
               aria-label="Menu"
-              className="rounded-full p-2 text-zinc-500 hover:bg-zinc-100"
+              className="rounded-full p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
               {menuOpen ? (
                 <svg
@@ -289,9 +265,9 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Dropdown menu */}
+            {/* Dropdown menu — nav only; sign-out etc. live in UserMenu */}
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg">
+              <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
                 {NAV_LINKS.map(({ href, label }) => (
                   <Link
                     key={href}
@@ -299,20 +275,13 @@ export default function Navbar() {
                     onClick={closeMobilePanels}
                     className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                       pathname === href
-                        ? "bg-amber-50 text-zinc-900"
-                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                        ? "bg-amber-50 text-zinc-900 dark:bg-amber-950/40 dark:text-zinc-100"
+                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     }`}
                   >
                     {label}
                   </Link>
                 ))}
-                <div className="my-1 border-t border-zinc-100" />
-                <button
-                  onClick={handleSignOut}
-                  className="w-full px-4 py-2.5 text-left text-sm font-medium text-red-500 hover:bg-zinc-50"
-                >
-                  Sign out
-                </button>
               </div>
             )}
           </div>
@@ -321,7 +290,7 @@ export default function Navbar() {
 
       {/* ── Mobile search bar (slide-down) ───────────────────────────────────── */}
       {mobileSearchOpen && (
-        <div className="border-t border-amber-200/60 bg-amber-50/80 px-4 py-3 md:hidden">
+        <div className="border-t border-amber-200/60 bg-amber-50/80 px-4 py-3 md:hidden dark:border-zinc-800 dark:bg-zinc-900/80">
           <div ref={mobileSearchRef} className="relative">
             <input
               autoFocus
@@ -330,7 +299,7 @@ export default function Navbar() {
               onFocus={() => query.length > 2 && setOpen(true)}
               placeholder="Search books..."
               aria-label="Search books"
-              className="w-full rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400"
+              className="w-full rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             />
             {showDropdown && (
               <ResultsDropdown

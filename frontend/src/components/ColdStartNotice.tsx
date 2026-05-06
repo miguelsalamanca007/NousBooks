@@ -7,7 +7,7 @@
  */
 export default function ColdStartNotice() {
   return (
-    <p className="mb-4 text-xs text-zinc-500">
+    <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400">
       ⏱ First request may take 1–2 min to wake the server up.
     </p>
   );

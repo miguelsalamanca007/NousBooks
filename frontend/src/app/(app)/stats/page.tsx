@@ -62,8 +62,8 @@ export default function StatsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-800">Reading stats</h1>
-        <p className="text-sm text-zinc-500">Member since {memberSinceLabel}</p>
+        <h1 className="text-2xl font-semibold text-zinc-800 dark:text-zinc-100">Reading stats</h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Member since {memberSinceLabel}</p>
       </div>
 
       {/* Top-line cards */}
@@ -78,8 +78,8 @@ export default function StatsPage() {
       </div>
 
       {/* Bar chart: finished per month */}
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Finished by month
         </h2>
         <div className="h-64 w-full">
@@ -130,8 +130,8 @@ export default function StatsPage() {
       </section>
 
       {/* Pie / donut: distribution by status */}
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Library distribution
         </h2>
 
@@ -179,9 +179,9 @@ export default function StatsPage() {
                     className="h-3 w-3 rounded-sm"
                     style={{ backgroundColor: STATUS_HEX[entry.status] }}
                   />
-                  <span className="text-zinc-700">{entry.name}</span>
+                  <span className="text-zinc-700 dark:text-zinc-200">{entry.name}</span>
                   <span className="text-zinc-400">·</span>
-                  <span className="font-medium text-zinc-700">
+                  <span className="font-medium text-zinc-700 dark:text-zinc-200">
                     {entry.value}
                   </span>
                 </li>
@@ -196,11 +196,11 @@ export default function StatsPage() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         {label}
       </p>
-      <p className="mt-1 text-3xl font-semibold text-zinc-800">{value}</p>
+      <p className="mt-1 text-3xl font-semibold text-zinc-800 dark:text-zinc-100">{value}</p>
     </div>
   );
 }
