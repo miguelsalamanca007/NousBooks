@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 interface Props {
@@ -29,10 +29,6 @@ export default function Modal({
   children,
   size = "md",
 }: Props) {
-  // Avoid running createPortal during SSR — document doesn't exist there.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -46,7 +42,10 @@ export default function Modal({
     };
   }, [open, onClose]);
 
-  if (!open || !mounted) return null;
+  // `open` is always toggled from a client event (button click), so this
+  // component never renders with `open === true` during SSR — no need for a
+  // separate "mounted" guard around createPortal.
+  if (!open || typeof document === "undefined") return null;
 
   const widthClass = size === "sm" ? "max-w-sm" : "max-w-lg";
 
