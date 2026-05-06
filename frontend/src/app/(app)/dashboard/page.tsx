@@ -22,6 +22,7 @@ import NewNoteModal from "@/components/NewNoteModal";
 import StarRating from "@/components/StarRating";
 import ProgressBar from "@/components/ProgressBar";
 import UpdateProgressModal from "@/components/UpdateProgressModal";
+import BookDetailModal from "@/components/BookDetailModal";
 
 const COLUMNS: { status: ReadingStatus; label: string }[] = [
   { status: "TO_READ", label: "Want to read" },
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   const [progressForId, setProgressForId] = useState<number | null>(null);
   const [activeBook, setActiveBook] = useState<UserBook | null>(null);
   const [mobileTab, setMobileTab] = useState<ReadingStatus>("TO_READ");
+  const [detailBook, setDetailBook] = useState<UserBook["book"] | null>(null);
 
   const { data: myBooks = [], isLoading } = useQuery({
     queryKey: ["myBooks"],
@@ -135,6 +137,7 @@ export default function DashboardPage() {
                   onAddNote={() => setNoteForBookId(ub.book.id)}
                   onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
                   onUpdateProgress={() => setProgressForId(ub.id)}
+                  onOpenDetail={() => setDetailBook(ub.book)}
                   isDragging={false}
                 />
               ))}
@@ -160,6 +163,7 @@ export default function DashboardPage() {
                   onAddNote={() => setNoteForBookId(ub.book.id)}
                   onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
                   onUpdateProgress={() => setProgressForId(ub.id)}
+                  onOpenDetail={() => setDetailBook(ub.book)}
                   isDragging={activeBook?.id === ub.id}
                 />
               ))}
@@ -184,6 +188,13 @@ export default function DashboardPage() {
         onClose={() => setProgressForId(null)}
         userBook={myBooks.find((ub) => ub.id === progressForId) ?? null}
       />
+
+      {detailBook && (
+        <BookDetailModal
+          book={detailBook}
+          onClose={() => setDetailBook(null)}
+        />
+      )}
     </DndContext>
   );
 }
@@ -233,6 +244,7 @@ function BookCard({
   onAddNote,
   onRate,
   onUpdateProgress,
+  onOpenDetail,
   isDragging,
 }: {
   ub: UserBook;
@@ -241,6 +253,7 @@ function BookCard({
   onAddNote: () => void;
   onRate: (rating: number | null) => void;
   onUpdateProgress: () => void;
+  onOpenDetail: () => void;
   isDragging: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -279,9 +292,13 @@ function BookCard({
       )}
 
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-zinc-700 cursor-default dark:text-zinc-200">
+        <button
+          onClick={onOpenDetail}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="line-clamp-2 text-left text-sm font-medium leading-snug text-zinc-700 hover:text-amber-700 hover:underline dark:text-zinc-200 dark:hover:text-amber-400"
+        >
           {ub.book.title}
-        </p>
+        </button>
 
         {/* Star rating — stop drag events so clicking stars doesn't drag */}
         <div
