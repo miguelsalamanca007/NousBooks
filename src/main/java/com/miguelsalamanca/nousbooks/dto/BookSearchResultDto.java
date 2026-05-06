@@ -14,4 +14,5 @@ public class BookSearchResultDto {
     private String description;
     private String thumbnail;
     private String publishedDate;
+    private Integer pageCount;
 }

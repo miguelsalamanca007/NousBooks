@@ -27,6 +27,7 @@ export interface Book {
   description: string;
   thumbnail: string;
   publishedDate: string;
+  pageCount: number | null;
 }
 
 export type ReadingStatus = "TO_READ" | "READING" | "READ";
@@ -51,6 +52,7 @@ export interface UserBook {
   review: string | null;
   startedAt: string | null;
   finishedAt: string | null;
+  currentPage: number | null;
 }
 
 export interface Note {

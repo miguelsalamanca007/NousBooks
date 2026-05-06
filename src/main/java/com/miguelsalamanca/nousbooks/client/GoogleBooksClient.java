@@ -101,6 +101,7 @@ public class GoogleBooksClient {
             dto.setAuthors(info.authors() != null ? info.authors() : Collections.emptyList());
             dto.setDescription(info.description());
             dto.setPublishedDate(info.publishedDate());
+            dto.setPageCount(info.pageCount());
             if (info.imageLinks() != null) {
                 dto.setThumbnail(info.imageLinks().thumbnail());
             }
@@ -122,6 +123,7 @@ public class GoogleBooksClient {
             List<String> authors,
             String description,
             String publishedDate,
+            Integer pageCount,
             ImageLinks imageLinks
     ) {}
 

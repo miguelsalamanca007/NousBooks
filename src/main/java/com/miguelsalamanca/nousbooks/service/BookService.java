@@ -69,6 +69,7 @@ public class BookService {
                     book.setDescription(volume.getDescription());
                     book.setThumbnail(volume.getThumbnail());
                     book.setPublishedDate(volume.getPublishedDate());
+                    book.setPageCount(volume.getPageCount());
                     return bookRepository.save(book);
                 });
     }

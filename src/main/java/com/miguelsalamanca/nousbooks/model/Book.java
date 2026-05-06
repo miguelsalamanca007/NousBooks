@@ -26,4 +26,7 @@ public class Book {
     @Column(columnDefinition = "TEXT")
     private String thumbnail;
     private String publishedDate;
+    // Total pages reported by Google Books. Nullable because the API doesn't
+    // always include it; the frontend lets the user supply it manually.
+    private Integer pageCount;
 }

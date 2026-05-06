@@ -103,7 +103,13 @@ export const userBooksApi = {
 
   update: (
     id: number,
-    data: { status?: ReadingStatus; rating?: number; review?: string }
+    data: {
+      status?: ReadingStatus;
+      rating?: number;
+      review?: string;
+      currentPage?: number;
+      pageCount?: number;
+    }
   ) =>
     request<UserBook>(`/api/user-books/${id}`, {
       method: "PATCH",

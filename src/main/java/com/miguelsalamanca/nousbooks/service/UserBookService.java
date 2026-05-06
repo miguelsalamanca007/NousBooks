@@ -71,8 +71,36 @@ public class UserBookService {
         if (request.getStartedAt() != null) userBook.setStartedAt(request.getStartedAt());
         if (request.getFinishedAt() != null) userBook.setFinishedAt(request.getFinishedAt());
 
-        if (request.getStatus() != null) {
-            applyStatusTransitionTimestamps(userBook, previousStatus, request.getStatus());
+        // Allow filling in pageCount when Google Books didn't supply it (or
+        // got it wrong). We only write it back to the shared Book row, never
+        // override a value the API already provided.
+        Book book = userBook.getBook();
+        if (request.getPageCount() != null && book.getPageCount() == null) {
+            book.setPageCount(request.getPageCount());
+        }
+
+        if (request.getCurrentPage() != null) {
+            Integer page = request.getCurrentPage();
+            // Clamp to [0, pageCount] when we know the total — protects the UI
+            // from a user who types 9999 in a 300-page book.
+            Integer total = book.getPageCount();
+            if (total != null && page > total) page = total;
+            userBook.setCurrentPage(page);
+
+            // Convenience: a book at page 0 hasn't really started; one at the
+            // last page is finished. Promote the status accordingly so the
+            // user doesn't have to do it manually.
+            if (total != null && page.equals(total) && userBook.getStatus() != ReadingStatus.READ) {
+                userBook.setStatus(ReadingStatus.READ);
+            } else if (page > 0 && userBook.getStatus() == ReadingStatus.TO_READ) {
+                userBook.setStatus(ReadingStatus.READING);
+            }
+        }
+
+        // Compute timestamps off the *final* status, which may have been
+        // promoted above by the progress logic.
+        if (userBook.getStatus() != previousStatus) {
+            applyStatusTransitionTimestamps(userBook, previousStatus, userBook.getStatus());
         }
 
         return userBookRepository.save(userBook);

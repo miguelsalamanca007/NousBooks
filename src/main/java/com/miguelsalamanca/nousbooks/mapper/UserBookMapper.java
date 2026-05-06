@@ -22,6 +22,7 @@ public class UserBookMapper {
         dto.setReview(userBook.getReview());
         dto.setStartedAt(userBook.getStartedAt());
         dto.setFinishedAt(userBook.getFinishedAt());
+        dto.setCurrentPage(userBook.getCurrentPage());
         return dto;
     }
 }

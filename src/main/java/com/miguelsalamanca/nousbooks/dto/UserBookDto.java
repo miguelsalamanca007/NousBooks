@@ -15,4 +15,5 @@ public class UserBookDto {
     private String review;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
+    private Integer currentPage;
 }
