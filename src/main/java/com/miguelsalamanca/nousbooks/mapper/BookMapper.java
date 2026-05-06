@@ -27,6 +27,7 @@ public class BookMapper {
         dto.setDescription(book.getDescription());
         dto.setThumbnail(book.getThumbnail());
         dto.setPublishedDate(book.getPublishedDate());
+        dto.setPageCount(book.getPageCount());
 
         return dto;
     }

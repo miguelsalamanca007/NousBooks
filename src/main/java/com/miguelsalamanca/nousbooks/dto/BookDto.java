@@ -12,4 +12,5 @@ public class BookDto {
     private String description;
     private String thumbnail;
     private String publishedDate;
+    private Integer pageCount;
 }

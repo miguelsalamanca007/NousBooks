@@ -47,6 +47,9 @@ public class UserBook {
     private String review;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
+    // How far the user has read. Null means "no progress recorded yet".
+    // Bounded between 0 and book.pageCount in the service layer.
+    private Integer currentPage;
 
     // Set by Hibernate the first time the entity is persisted. Used by the
     // stats endpoint as a fallback "added to library" timestamp.

@@ -20,6 +20,8 @@ import { userBooksApi } from "@/lib/api";
 import { ReadingStatus, UserBook } from "@/types";
 import NewNoteModal from "@/components/NewNoteModal";
 import StarRating from "@/components/StarRating";
+import ProgressBar from "@/components/ProgressBar";
+import UpdateProgressModal from "@/components/UpdateProgressModal";
 
 const COLUMNS: { status: ReadingStatus; label: string }[] = [
   { status: "TO_READ", label: "Want to read" },
@@ -30,6 +32,7 @@ const COLUMNS: { status: ReadingStatus; label: string }[] = [
 export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [noteForBookId, setNoteForBookId] = useState<number | null>(null);
+  const [progressForId, setProgressForId] = useState<number | null>(null);
   const [activeBook, setActiveBook] = useState<UserBook | null>(null);
   const [mobileTab, setMobileTab] = useState<ReadingStatus>("TO_READ");
 
@@ -131,6 +134,7 @@ export default function DashboardPage() {
                   onRemove={() => removeBook.mutate(ub.id)}
                   onAddNote={() => setNoteForBookId(ub.book.id)}
                   onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
+                  onUpdateProgress={() => setProgressForId(ub.id)}
                   isDragging={false}
                 />
               ))}
@@ -155,6 +159,7 @@ export default function DashboardPage() {
                   onRemove={() => removeBook.mutate(ub.id)}
                   onAddNote={() => setNoteForBookId(ub.book.id)}
                   onRate={(rating) => rateBook.mutate({ id: ub.id, rating })}
+                  onUpdateProgress={() => setProgressForId(ub.id)}
                   isDragging={activeBook?.id === ub.id}
                 />
               ))}
@@ -172,6 +177,12 @@ export default function DashboardPage() {
         open={noteForBookId !== null}
         onClose={() => setNoteForBookId(null)}
         defaultBookId={noteForBookId ?? undefined}
+      />
+
+      <UpdateProgressModal
+        open={progressForId !== null}
+        onClose={() => setProgressForId(null)}
+        userBook={myBooks.find((ub) => ub.id === progressForId) ?? null}
       />
     </DndContext>
   );
@@ -221,6 +232,7 @@ function BookCard({
   onRemove,
   onAddNote,
   onRate,
+  onUpdateProgress,
   isDragging,
 }: {
   ub: UserBook;
@@ -228,6 +240,7 @@ function BookCard({
   onRemove: () => void;
   onAddNote: () => void;
   onRate: (rating: number | null) => void;
+  onUpdateProgress: () => void;
   isDragging: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -277,6 +290,29 @@ function BookCard({
         >
           <StarRating value={ub.rating} onChange={onRate} size="sm" />
         </div>
+
+        {/* Reading progress — only relevant while the book is being read.
+            Compact bar; the full readout lives in the Update progress modal. */}
+        {ub.status === "READING" && (
+          <div
+            className="mt-2"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <ProgressBar
+              current={ub.currentPage}
+              total={ub.book.pageCount}
+              compact
+            />
+            <button
+              onClick={onUpdateProgress}
+              className="mt-1 text-xs text-zinc-500 hover:text-zinc-800 cursor-pointer dark:text-zinc-400 dark:hover:text-zinc-200"
+            >
+              {ub.currentPage != null && ub.book.pageCount
+                ? `${ub.currentPage} / ${ub.book.pageCount} pages`
+                : "Update progress"}
+            </button>
+          </div>
+        )}
 
         <div className="mt-2 flex flex-wrap gap-1">
           {others.map((c) => (

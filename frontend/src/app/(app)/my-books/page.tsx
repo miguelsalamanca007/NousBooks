@@ -2,13 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
 import { STATUS_COLORS, STATUS_LABELS } from "@/types";
 import StarRating from "@/components/StarRating";
+import ProgressBar from "@/components/ProgressBar";
+import UpdateProgressModal from "@/components/UpdateProgressModal";
 
 export default function MyBooksPage() {
   const queryClient = useQueryClient();
+  const [progressForId, setProgressForId] = useState<number | null>(null);
 
   const { data: myBooks = [], isLoading } = useQuery({
     queryKey: ["myBooks"],
@@ -67,6 +71,20 @@ export default function MyBooksPage() {
                 <p className="text-xs text-zinc-400">{ub.book.publishedDate}</p>
               )}
 
+              {/* Reading progress, when relevant. Same row layout on both
+                  breakpoints — the bar takes whatever width is left. */}
+              {ub.status === "READING" && (
+                <button
+                  onClick={() => setProgressForId(ub.id)}
+                  className="mt-2 block w-full max-w-xs text-left"
+                >
+                  <ProgressBar
+                    current={ub.currentPage}
+                    total={ub.book.pageCount}
+                  />
+                </button>
+              )}
+
               {/* On mobile, actions live below the title */}
               <div className="mt-2 flex flex-wrap items-center gap-2 sm:hidden">
                 <StarRating
@@ -120,6 +138,12 @@ export default function MyBooksPage() {
           </li>
         ))}
       </ul>
+
+      <UpdateProgressModal
+        open={progressForId !== null}
+        onClose={() => setProgressForId(null)}
+        userBook={myBooks.find((ub) => ub.id === progressForId) ?? null}
+      />
     </div>
   );
 }
