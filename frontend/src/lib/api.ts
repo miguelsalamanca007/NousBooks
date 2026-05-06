@@ -17,11 +17,18 @@ async function request<T>(
 ): Promise<T> {
   const token = useAuthStore.getState().token;
 
+  const isPublicAuthRoute =
+    path === "/api/auth/login" ||
+    path === "/api/auth/register" ||
+    path === "/api/auth/google";
+
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token && !isPublicAuthRoute
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
       ...options.headers,
     },
   });
@@ -29,10 +36,6 @@ async function request<T>(
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
 
-    // If the token is rejected, clear it so the app layout redirects to /login
-    // on the next render instead of looping with stale credentials. We skip the
-    // auth endpoints themselves so a wrong-password 401 on /login doesn't wipe
-    // a still-valid session.
     if (
       res.status === 401 &&
       !path.startsWith("/api/auth/") &&
@@ -44,7 +47,6 @@ async function request<T>(
     throw new ApiError(res.status, body);
   }
 
-  // 204 No Content
   if (res.status === 204) return undefined as T;
 
   return res.json();
