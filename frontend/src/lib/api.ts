@@ -87,9 +87,36 @@ export const authApi = {
 
 // ── Books ─────────────────────────────────────────────────────────────────────
 
+export type PrintType = "BOOKS" | "MAGAZINES" | "ALL";
+export type OrderBy = "RELEVANCE" | "NEWEST";
+
+export interface AdvancedSearchParams {
+  q?: string;
+  author?: string;
+  publisher?: string;
+  subject?: string;
+  printType?: PrintType;
+  orderBy?: OrderBy;
+  page?: number;
+  size?: number;
+}
+
 export const booksApi = {
   search: (q: string) =>
     request<BookSearchResult[]>(`/api/books/search?q=${encodeURIComponent(q)}`),
+
+  searchAdvanced: (params: AdvancedSearchParams) => {
+    const qs = new URLSearchParams();
+    if (params.q) qs.set("q", params.q);
+    if (params.author) qs.set("author", params.author);
+    if (params.publisher) qs.set("publisher", params.publisher);
+    if (params.subject) qs.set("subject", params.subject);
+    if (params.printType) qs.set("printType", params.printType);
+    if (params.orderBy) qs.set("orderBy", params.orderBy);
+    if (params.page != null) qs.set("page", String(params.page));
+    if (params.size != null) qs.set("size", String(params.size));
+    return request<BookSearchResult[]>(`/api/books/search?${qs.toString()}`);
+  },
 };
 
 // ── User Books ────────────────────────────────────────────────────────────────

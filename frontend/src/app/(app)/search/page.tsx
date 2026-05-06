@@ -7,15 +7,18 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { booksApi, userBooksApi } from "@/lib/api";
 import { BookSearchResult } from "@/types";
 import BookDetailModal from "@/components/BookDetailModal";
+import AddToLibraryButton from "@/components/AddToLibraryButton";
 
 function BookResultCard({
   book,
   isAdding,
+  isAdded,
   onAdd,
   onOpenDetail,
 }: {
   book: BookSearchResult;
   isAdding: boolean;
+  isAdded: boolean;
   onAdd: () => void;
   onOpenDetail: () => void;
 }) {
@@ -57,13 +60,7 @@ function BookResultCard({
           </p>
         )}
 
-        <button
-          onClick={onAdd}
-          disabled={isAdding}
-          className="mt-3 rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
-        >
-          {isAdding ? "Adding…" : "+ Add to library"}
-        </button>
+        <AddToLibraryButton isAdding={isAdding} isAdded={isAdded} onAdd={onAdd} />
       </div>
     </div>
   );
@@ -76,6 +73,7 @@ function SearchResults() {
   const q = params.get("q") ?? "";
 
   const [selectedBook, setSelectedBook] = useState<BookSearchResult | null>(null);
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
   const { data: results = [], isFetching, isError } = useQuery({
     queryKey: ["bookSearch", q],
@@ -86,8 +84,9 @@ function SearchResults() {
   const addBook = useMutation({
     mutationFn: (googleBooksId: string) =>
       userBooksApi.add(googleBooksId, "TO_READ"),
-    onSuccess: () => {
+    onSuccess: (_, googleBooksId) => {
       queryClient.invalidateQueries({ queryKey: ["myBooks"] });
+      setAddedIds((prev) => new Set(prev).add(googleBooksId));
     },
   });
 
@@ -176,6 +175,7 @@ function SearchResults() {
                 key={book.googleBooksId}
                 book={book}
                 isAdding={addBook.isPending && addBook.variables === book.googleBooksId}
+                isAdded={addedIds.has(book.googleBooksId)}
                 onAdd={() => handleAdd(book.googleBooksId)}
                 onOpenDetail={() => setSelectedBook(book)}
               />
@@ -189,6 +189,7 @@ function SearchResults() {
           book={selectedBook}
           onClose={() => setSelectedBook(null)}
           isAdding={addBook.isPending && addBook.variables === selectedBook.googleBooksId}
+          isAdded={addedIds.has(selectedBook.googleBooksId)}
           onAdd={() => handleAdd(selectedBook.googleBooksId)}
         />
       )}

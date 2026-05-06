@@ -28,12 +28,14 @@ function ResultsDropdown({
   query,
   onAdd,
   onSeeAll,
+  onAdvancedSearch,
 }: {
   results: BookSearchResult[];
   isFetching: boolean;
   query: string;
   onAdd: (googleBooksId: string) => void;
   onSeeAll: () => void;
+  onAdvancedSearch: () => void;
 }) {
   return (
     <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
@@ -79,7 +81,7 @@ function ResultsDropdown({
         </div>
       ))}
       {!isFetching && results.length > 0 && (
-        <div className="border-t border-zinc-100 px-4 py-2.5 dark:border-zinc-800">
+        <div className="border-t border-zinc-100 px-4 py-2 dark:border-zinc-800">
           <button
             onClick={onSeeAll}
             className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40"
@@ -99,6 +101,26 @@ function ResultsDropdown({
                 d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
               />
             </svg>
+          </button>
+          <button
+            onClick={onAdvancedSearch}
+            className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.8}
+              stroke="currentColor"
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 4.65 4.65a7.5 7.5 0 0 0 12 12z"
+              />
+            </svg>
+            Advanced search
           </button>
         </div>
       )}
@@ -174,6 +196,13 @@ export default function Navbar() {
     router.push(`/search?q=${encodeURIComponent(debouncedQuery)}`);
   }
 
+  function handleAdvancedSearch() {
+    setOpen(false);
+    setMobileSearchOpen(false);
+    const params = debouncedQuery ? `?q=${encodeURIComponent(debouncedQuery)}` : "";
+    router.push(`/advanced-search${params}`);
+  }
+
   function closeMobilePanels() {
     setMenuOpen(false);
     setMobileSearchOpen(false);
@@ -230,6 +259,7 @@ export default function Navbar() {
               query={debouncedQuery}
               onAdd={handleAddBook}
               onSeeAll={handleSeeAll}
+              onAdvancedSearch={handleAdvancedSearch}
             />
           )}
         </div>
@@ -345,6 +375,7 @@ export default function Navbar() {
                 query={debouncedQuery}
                 onAdd={handleAddBook}
                 onSeeAll={handleSeeAll}
+                onAdvancedSearch={handleAdvancedSearch}
               />
             )}
           </div>

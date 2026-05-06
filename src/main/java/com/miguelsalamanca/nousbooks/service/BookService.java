@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.client.GoogleBooksClient;
+import com.miguelsalamanca.nousbooks.dto.BookSearchRequest;
 import com.miguelsalamanca.nousbooks.dto.BookSearchResultDto;
 import com.miguelsalamanca.nousbooks.dto.CreateBookRequest;
 import com.miguelsalamanca.nousbooks.mapper.BookMapper;
@@ -42,8 +43,8 @@ public class BookService {
     }
 
     /** Search hits Google Books only — no DB I/O, so no transaction needed. */
-    public List<BookSearchResultDto> search(String query) {
-        return googleBooksClient.search(query);
+    public List<BookSearchResultDto> search(BookSearchRequest request) {
+        return googleBooksClient.search(request);
     }
 
     /**
