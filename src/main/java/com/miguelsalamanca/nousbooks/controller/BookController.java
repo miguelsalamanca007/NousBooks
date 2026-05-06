@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.miguelsalamanca.nousbooks.dto.BookDto;
+import com.miguelsalamanca.nousbooks.dto.BookSearchRequest;
 import com.miguelsalamanca.nousbooks.dto.BookSearchResultDto;
 import com.miguelsalamanca.nousbooks.dto.CreateBookRequest;
+import com.miguelsalamanca.nousbooks.enums.OrderBy;
+import com.miguelsalamanca.nousbooks.enums.PrintType;
 import com.miguelsalamanca.nousbooks.mapper.BookMapper;
 import com.miguelsalamanca.nousbooks.model.Book;
 import com.miguelsalamanca.nousbooks.service.BookService;
@@ -31,8 +34,28 @@ public class BookController {
     private final BookMapper bookMapper;
 
     @GetMapping("/search")
-    public List<BookSearchResultDto> search(@RequestParam String q) {
-        return bookService.search(q);
+    public List<BookSearchResultDto> search(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String publisher,
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) PrintType printType,
+            @RequestParam(required = false) OrderBy orderBy,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        BookSearchRequest request = BookSearchRequest.builder()
+                .query(q)
+                .author(author)
+                .publisher(publisher)
+                .subject(subject)
+                .printType(printType)
+                .orderBy(orderBy)
+                .page(page)
+                .size(size)
+                .build();
+
+        return bookService.search(request);
     }
 
     // Books are added to the catalogue lazily via the Google Books integration

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Modal from "@/components/Modal";
+import AddToLibraryButton from "@/components/AddToLibraryButton";
 
 export interface BookDetail {
   title: string;
@@ -23,24 +24,25 @@ interface Props {
   /** When provided, renders an "+ Add to library" button. */
   onAdd?: () => void;
   isAdding?: boolean;
+  isAdded?: boolean;
 }
 
-export default function BookDetailModal({ book, onClose, onAdd, isAdding }: Props) {
+export default function BookDetailModal({ book, onClose, onAdd, isAdding, isAdded }: Props) {
   return (
     <Modal open title={book.title} onClose={onClose} size="lg">
       <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
         {/* Cover */}
         <div className="flex shrink-0 justify-center sm:justify-start">
           {book.thumbnail ? (
-            <Image
-              src={largeThumb(book.thumbnail)}
-              alt={book.title}
-              width={160}
-              height={230}
-              unoptimized
-              className="rounded-lg object-cover shadow-md"
-              style={{ width: 160, height: "auto" }}
-            />
+            <div className="relative h-[230px] w-[160px] shrink-0">
+              <Image
+                src={largeThumb(book.thumbnail)}
+                alt={book.title}
+                fill
+                unoptimized
+                className="rounded-lg object-cover shadow-md"
+              />
+            </div>
           ) : (
             <div className="flex h-[230px] w-[160px] items-center justify-center rounded-lg bg-zinc-100 text-zinc-400 dark:bg-zinc-800">
               <svg
@@ -86,13 +88,12 @@ export default function BookDetailModal({ book, onClose, onAdd, isAdding }: Prop
           )}
 
           {onAdd && (
-            <button
-              onClick={onAdd}
-              disabled={isAdding}
-              className="mt-6 rounded-full border border-zinc-300 px-4 py-1.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40"
-            >
-              {isAdding ? "Adding…" : "+ Add to library"}
-            </button>
+            <AddToLibraryButton
+              size="md"
+              isAdding={!!isAdding}
+              isAdded={!!isAdded}
+              onAdd={onAdd}
+            />
           )}
         </div>
       </div>
