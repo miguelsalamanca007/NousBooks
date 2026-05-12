@@ -30,14 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
-# .env.local and .env.*.local are never committed (contain secrets / machine-specific overrides)
+# env files — never committed. Set values in the hosting dashboard
+# (Vercel / Render) or in a local .env.local for development.
+.env
 .env.local
 .env.*.local
-# .env.production is committed so the API URL is baked in without relying on Vercel's dashboard
-# .env and .env.development are also kept out of git
-.env
 .env.development
+.env.production
 
 # vercel
 .vercel

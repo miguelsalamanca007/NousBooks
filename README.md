@@ -131,8 +131,8 @@ docker run -p 8080:8080 \
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_API_URL` | Backend base URL (defined in `frontend/.env.production`) |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Public Google OAuth Client ID |
+| `NEXT_PUBLIC_API_URL` | Backend base URL. Set in `frontend/.env.local` for development and in the Vercel dashboard for production. See `frontend/.env.example`. |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Public Google OAuth Client ID. Same configuration mechanism as above. |
 
 ## Database migrations
 
@@ -142,7 +142,7 @@ Naming convention: `V{n}__{snake_case_description}.sql`.
 
 ## Deployment
 
-- **Frontend → Vercel.** Auto-deploys from `main`. The backend URL is pinned in `frontend/.env.production` so the build doesn't depend on Vercel's dashboard.
+- **Frontend → Vercel.** Auto-deploys from `main`. Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_GOOGLE_CLIENT_ID` in the Vercel dashboard (Project → Settings → Environment Variables) so they're baked into each production build.
 - **Backend → Render.** Docker image built from the `Dockerfile`. Required variables: `SPRING_PROFILES_ACTIVE=prod`, database credentials, `APP_JWT_SECRET`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_BOOKS_API_KEY` and optionally `FRONTEND_URL`.
 - **Database → Render Postgres.** Flyway applies migrations on startup.
 
