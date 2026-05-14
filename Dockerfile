@@ -17,6 +17,9 @@ RUN ./mvnw package -DskipTests -q
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chmod 777 /app/logs
+
 # Create a non-root user for the process
 RUN addgroup -S app && adduser -S app -G app
 USER app
