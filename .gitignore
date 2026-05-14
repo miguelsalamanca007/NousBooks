@@ -32,5 +32,13 @@ build/
 ### VS Code ###
 .vscode/
 
+# H2 file-based database (dev only)
+data/
+
+# Application log output (rolling file appender)
+logs/
+*.log
+*.log.gz
+
 ### Maven ###
 .
