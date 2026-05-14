@@ -34,6 +34,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, String>> handleResponseStatus(ResponseStatusException ex) {
+        // 5xx ResponseStatusExceptions are programmer errors — log the stack
+        // so we can debug. 4xx are expected client mistakes — one tidy line is enough.
+        if (ex.getStatusCode().is5xxServerError()) {
+            log.error("ResponseStatusException {} - {}", ex.getStatusCode(), ex.getReason(), ex);
+        } else {
+            log.warn("ResponseStatusException {} - {}", ex.getStatusCode(), ex.getReason());
+        }
         return ResponseEntity.status(ex.getStatusCode())
                 .body(Map.of("message", ex.getReason() != null ? ex.getReason() : ex.getMessage()));
     }
@@ -45,12 +52,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Map<String, String> handleAuthentication(AuthenticationException ex) {
+        log.warn("Authentication failed: {}", ex.getMessage());
         return Map.of("message", "Invalid email or password");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String, String> handleAccessDenied(AccessDeniedException ex) {
+        log.warn("Access denied: {}", ex.getMessage());
         return Map.of("message", "Access denied");
     }
 

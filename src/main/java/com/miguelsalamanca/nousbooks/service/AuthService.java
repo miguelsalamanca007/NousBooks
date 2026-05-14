@@ -24,10 +24,12 @@ import com.miguelsalamanca.nousbooks.repository.UserRepository;
 import com.miguelsalamanca.nousbooks.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -37,7 +39,9 @@ public class AuthService {
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
 
     public AuthResponse register(RegisterRequest request) {
+        log.debug("Register attempt for email={}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.warn("Register rejected, email already in use: {}", request.getEmail());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already in use");
         }
         User user = new User();
@@ -47,11 +51,13 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);
+        log.info("Registered new user id={} email={}", user.getId(), user.getEmail());
         return new AuthResponse(token);
     }
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
+        log.debug("Login attempt for email={}", request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -59,6 +65,7 @@ public class AuthService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         String token = jwtService.generateToken(user);
+        log.info("Login successful for user id={} email={}", user.getId(), user.getEmail());
         return new AuthResponse(token);
     }
 
@@ -88,6 +95,7 @@ public class AuthService {
         // for account-linking purposes.
         Boolean emailVerified = payload.getEmailVerified();
         if (emailVerified == null || !emailVerified) {
+            log.warn("Google login rejected, unverified email for googleId={}", googleId);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Google email not verified");
         }
 
@@ -96,6 +104,7 @@ public class AuthService {
                         .map(existing -> linkGoogleAccount(existing, googleId, name))
                         .orElseGet(() -> createGoogleUser(email, googleId, name)));
 
+        log.info("Google login successful for user id={} email={}", user.getId(), user.getEmail());
         return new AuthResponse(jwtService.generateToken(user));
     }
 
@@ -113,6 +122,7 @@ public class AuthService {
     }
 
     private User linkGoogleAccount(User existing, String googleId, String name) {
+        log.info("Linking Google account to existing user id={} email={}", existing.getId(), existing.getEmail());
         existing.setGoogleId(googleId);
         // Only fill in name if we don't already have one — don't clobber a
         // value the user might have set themselves later.
@@ -123,6 +133,7 @@ public class AuthService {
     }
 
     private User createGoogleUser(String email, String googleId, String name) {
+        log.info("Creating new OAuth-only user for email={}", email);
         User user = new User();
         user.setEmail(email);
         user.setGoogleId(googleId);
