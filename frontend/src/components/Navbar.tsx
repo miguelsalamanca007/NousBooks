@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/dashboard", label: "Home" },
   { href: "/my-books", label: "My Books" },
   { href: "/notes", label: "My Notes" },
+  { href: "/highlights", label: "Highlights" },
   { href: "/stats", label: "Stats" },
 ];
 

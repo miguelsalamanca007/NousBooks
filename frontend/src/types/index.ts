@@ -77,3 +77,14 @@ export interface Stats {
   finishedByMonth: MonthlyCount[];
   memberSince: string;
 }
+
+export interface Highlight {
+  id: number;
+  book: Book;
+  text: string;
+  note: string | null;
+  pageNumber: number | null;
+  createdAt: string;
+  // Only present on /search responses. Cosine distance — lower is closer.
+  relevance?: number;
+}

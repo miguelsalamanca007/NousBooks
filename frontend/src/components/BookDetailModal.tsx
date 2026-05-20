@@ -25,9 +25,18 @@ interface Props {
   onAdd?: () => void;
   isAdding?: boolean;
   isAdded?: boolean;
+  /** When provided, renders an "+ Add highlight" button. */
+  onAddHighlight?: () => void;
 }
 
-export default function BookDetailModal({ book, onClose, onAdd, isAdding, isAdded }: Props) {
+export default function BookDetailModal({
+  book,
+  onClose,
+  onAdd,
+  isAdding,
+  isAdded,
+  onAddHighlight,
+}: Props) {
   return (
     <Modal open title={book.title} onClose={onClose} size="lg">
       <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
@@ -87,14 +96,24 @@ export default function BookDetailModal({ book, onClose, onAdd, isAdding, isAdde
             </p>
           )}
 
-          {onAdd && (
-            <AddToLibraryButton
-              size="md"
-              isAdding={!!isAdding}
-              isAdded={!!isAdded}
-              onAdd={onAdd}
-            />
-          )}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {onAdd && (
+              <AddToLibraryButton
+                size="md"
+                isAdding={!!isAdding}
+                isAdded={!!isAdded}
+                onAdd={onAdd}
+              />
+            )}
+            {onAddHighlight && (
+              <button
+                onClick={onAddHighlight}
+                className="rounded-full border border-amber-300/80 bg-amber-50/70 px-4 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-900/40"
+              >
+                + Add highlight
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </Modal>

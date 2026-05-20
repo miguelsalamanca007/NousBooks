@@ -2,6 +2,7 @@ import { useAuthStore } from "@/store/auth";
 import {
   AuthResponse,
   BookSearchResult,
+  Highlight,
   Note,
   ReadingStatus,
   Stats,
@@ -197,4 +198,41 @@ export const userApi = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+};
+
+// ── Highlights ───────────────────────────────────────────────────────────────
+
+export const highlightsApi = {
+  list: () => request<Highlight[]>("/api/highlights"),
+
+  byBook: (bookId: number) =>
+    request<Highlight[]>(`/api/highlights/by-book/${bookId}`),
+
+  create: (data: {
+    bookId: number;
+    text: string;
+    note?: string;
+    pageNumber?: number;
+  }) =>
+    request<Highlight>("/api/highlights", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: (
+    id: number,
+    data: { text?: string; note?: string; pageNumber?: number }
+  ) =>
+    request<Highlight>(`/api/highlights/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  remove: (id: number) =>
+    request<void>(`/api/highlights/${id}`, { method: "DELETE" }),
+
+  search: (q: string, limit = 20) =>
+    request<Highlight[]>(
+      `/api/highlights/search?q=${encodeURIComponent(q)}&limit=${limit}`
+    ),
 };
