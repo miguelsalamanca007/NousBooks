@@ -11,11 +11,13 @@ import StarRating from "@/components/StarRating";
 import ProgressBar from "@/components/ProgressBar";
 import UpdateProgressModal from "@/components/UpdateProgressModal";
 import BookDetailModal from "@/components/BookDetailModal";
+import HighlightCaptureModal from "@/components/HighlightCaptureModal";
 
 export default function MyBooksPage() {
   const queryClient = useQueryClient();
   const [progressForId, setProgressForId] = useState<number | null>(null);
   const [detailBook, setDetailBook] = useState<Book | null>(null);
+  const [highlightForBookId, setHighlightForBookId] = useState<number | null>(null);
 
   const { data: myBooks = [], isLoading } = useQuery({
     queryKey: ["myBooks"],
@@ -169,8 +171,18 @@ export default function MyBooksPage() {
         <BookDetailModal
           book={detailBook}
           onClose={() => setDetailBook(null)}
+          onAddHighlight={() => {
+            setHighlightForBookId(detailBook.id);
+            setDetailBook(null);
+          }}
         />
       )}
+
+      <HighlightCaptureModal
+        open={highlightForBookId !== null}
+        onClose={() => setHighlightForBookId(null)}
+        defaultBookId={highlightForBookId ?? undefined}
+      />
     </div>
   );
 }
