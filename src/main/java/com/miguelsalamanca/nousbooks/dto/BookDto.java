@@ -1,5 +1,7 @@
 package com.miguelsalamanca.nousbooks.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,4 +15,6 @@ public class BookDto {
     private String thumbnail;
     private String publishedDate;
     private Integer pageCount;
+    private List<String> authors;
+    private String publisher;
 }

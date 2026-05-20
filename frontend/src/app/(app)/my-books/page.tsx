@@ -89,6 +89,16 @@ export default function MyBooksPage() {
               >
                 {ub.book.title}
               </button>
+              {ub.book.authors && ub.book.authors.length > 0 && (
+                <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                  {ub.book.authors.join(", ")}
+                </p>
+              )}
+              {ub.book.publisher && (
+                <p className="truncate text-xs text-zinc-400 dark:text-zinc-500">
+                  {ub.book.publisher}
+                </p>
+              )}
               {ub.book.publishedDate && (
                 <p className="text-xs text-zinc-400">{ub.book.publishedDate}</p>
               )}

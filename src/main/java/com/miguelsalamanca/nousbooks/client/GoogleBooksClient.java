@@ -148,6 +148,7 @@ public class GoogleBooksClient {
             dto.setDescription(info.description());
             dto.setPublishedDate(info.publishedDate());
             dto.setPageCount(info.pageCount());
+            dto.setPublisher(info.publisher());
             if (info.imageLinks() != null) {
                 dto.setThumbnail(info.imageLinks().thumbnail());
             }
@@ -167,6 +168,7 @@ public class GoogleBooksClient {
     record VolumeInfo(
             String title,
             List<String> authors,
+            String publisher,
             String description,
             String publishedDate,
             Integer pageCount,

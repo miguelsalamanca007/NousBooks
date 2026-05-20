@@ -71,6 +71,10 @@ public class BookService {
                     book.setThumbnail(volume.getThumbnail());
                     book.setPublishedDate(volume.getPublishedDate());
                     book.setPageCount(volume.getPageCount());
+                    book.setPublisher(volume.getPublisher());
+                    if (volume.getAuthors() != null && !volume.getAuthors().isEmpty()) {
+                        book.setAuthors(String.join(";", volume.getAuthors()));
+                    }
                     return bookRepository.save(book);
                 });
     }

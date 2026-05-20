@@ -29,4 +29,9 @@ public class Book {
     // Total pages reported by Google Books. Nullable because the API doesn't
     // always include it; the frontend lets the user supply it manually.
     private Integer pageCount;
+    // Semicolon-separated list of authors as returned by Google Books.
+    @Column(columnDefinition = "TEXT")
+    private String authors;
+    @Column(length = 500)
+    private String publisher;
 }

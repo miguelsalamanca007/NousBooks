@@ -18,6 +18,7 @@ export interface BookSearchResult {
   description: string;
   thumbnail: string;
   publishedDate: string;
+  publisher?: string;
 }
 
 export interface Book {
@@ -28,6 +29,8 @@ export interface Book {
   thumbnail: string;
   publishedDate: string;
   pageCount: number | null;
+  authors?: string[];
+  publisher?: string;
 }
 
 export type ReadingStatus = "TO_READ" | "READING" | "READ";
