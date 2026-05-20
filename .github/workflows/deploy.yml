@@ -45,6 +45,7 @@ jobs:
             echo "GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}" >> .env
             echo "APP_JWT_SECRET=${{ secrets.APP_JWT_SECRET }}" >> .env
             echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> .env
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
             docker compose down
             docker compose pull
             docker compose up -d
