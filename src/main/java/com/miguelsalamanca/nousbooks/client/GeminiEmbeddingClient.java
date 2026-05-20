@@ -29,7 +29,11 @@ public class GeminiEmbeddingClient {
 
     private static final Logger log = LoggerFactory.getLogger(GeminiEmbeddingClient.class);
     private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
-    private static final String MODEL = "models/text-embedding-004";
+    // gemini-embedding-001 replaces text-embedding-004 as the current
+    // recommended embedding model. We pin outputDimensionality to 768 so
+    // the vectors keep matching the vector(768) column defined in V10.
+    private static final String MODEL = "models/gemini-embedding-001";
+    private static final int OUTPUT_DIMENSIONS = 768;
 
     private final RestClient restClient;
     private final String apiKey;
@@ -62,7 +66,8 @@ public class GeminiEmbeddingClient {
         try {
             EmbedRequest body = new EmbedRequest(
                     MODEL,
-                    new Content(List.of(new Part(text)))
+                    new Content(List.of(new Part(text))),
+                    OUTPUT_DIMENSIONS
             );
 
             EmbedResponse response = restClient.post()
@@ -98,7 +103,7 @@ public class GeminiEmbeddingClient {
     // ── Wire types ───────────────────────────────────────────────────────────
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    record EmbedRequest(String model, Content content) {}
+    record EmbedRequest(String model, Content content, int outputDimensionality) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     record Content(List<Part> parts) {}
