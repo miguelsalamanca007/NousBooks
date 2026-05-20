@@ -39,9 +39,9 @@ export const STATUS_LABELS: Record<ReadingStatus, string> = {
 };
 
 export const STATUS_COLORS: Record<ReadingStatus, string> = {
-  TO_READ: "bg-amber-100 text-amber-800",
-  READING: "bg-sky-100 text-sky-800",
-  READ:    "bg-emerald-100 text-emerald-800",
+  TO_READ: "nb-pill-to-read",
+  READING: "nb-pill-reading",
+  READ:    "nb-pill-read",
 };
 
 export interface UserBook {

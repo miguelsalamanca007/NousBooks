@@ -22,12 +22,12 @@ export default function ProgressBar({ current, total, compact = false }: Props) 
   return (
     <div className="w-full">
       <div
-        className={`w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800 ${
-          compact ? "h-1" : "h-1.5"
+        className={`w-full overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800/80 ${
+          compact ? "h-1.5" : "h-2"
         }`}
       >
         <div
-          className="h-full rounded-full bg-amber-400 transition-[width] duration-300 dark:bg-amber-300"
+          className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-400 shadow-[0_0_8px_rgba(251,146,60,0.5)] transition-[width] duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>

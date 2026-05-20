@@ -59,15 +59,15 @@ export default function NotesPage() {
     <div>
       <div className="mb-5 flex items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold text-zinc-800 dark:text-zinc-100">My Notes</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">My Notes</h1>
 
           {/* Active book filter badge */}
           {bookIdFilter && bookTitleParam && (
-            <span className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+            <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-200 to-orange-200 px-3 py-0.5 text-xs font-semibold text-amber-900 shadow-sm shadow-amber-300/40 dark:from-amber-900/60 dark:to-orange-900/60 dark:text-amber-100">
               {bookTitleParam}
               <button
                 onClick={clearBookFilter}
-                className="hover:text-amber-600"
+                className="hover:text-amber-700 dark:hover:text-amber-300"
                 title="Clear filter"
               >
                 ✕
@@ -78,7 +78,7 @@ export default function NotesPage() {
 
         <button
           onClick={() => setCreating(true)}
-          className="shrink-0 rounded-full bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="nb-btn-accent shrink-0 rounded-full px-4 py-2 text-sm font-semibold tracking-tight"
         >
           + New note
         </button>
@@ -88,7 +88,7 @@ export default function NotesPage() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search in your notes..."
-        className="mb-6 w-full max-w-sm rounded-full border border-zinc-400 bg-white px-4 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:placeholder:text-zinc-500"
+        className="nb-input mb-6 max-w-sm !rounded-full"
       />
 
       {isLoading && <p className="text-sm text-zinc-400">Loading…</p>}
@@ -117,7 +117,7 @@ export default function NotesPage() {
               <li
                 key={note.id}
                 onClick={() => router.push(`/notes/${note.id}`)}
-                className="cursor-pointer rounded-xl border border-zinc-200 bg-white p-4 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                className="nb-card cursor-pointer rounded-2xl p-4"
               >
                 <p className="font-medium text-zinc-800 leading-snug dark:text-zinc-100">
                   {note.title || (
@@ -140,34 +140,36 @@ export default function NotesPage() {
           </ul>
 
           {/* Desktop: table */}
-          <table className="hidden w-full text-sm sm:table">
-            <thead>
-              <tr className="border-b border-zinc-200 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:border-zinc-800">
-                <th className="pb-3 pr-6">Title</th>
-                <th className="pb-3 pr-6">Book</th>
-                <th className="pb-3">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((note: Note) => (
-                <tr
-                  key={note.id}
-                  onClick={() => router.push(`/notes/${note.id}`)}
-                  className="cursor-pointer border-b border-zinc-100 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800"
-                >
-                  <td className="py-3 pr-6 font-medium text-zinc-800 dark:text-zinc-100">
-                    {note.title || (
-                      <span className="text-zinc-400 italic">Untitled</span>
-                    )}
-                  </td>
-                  <td className="py-3 pr-6 text-zinc-500 dark:text-zinc-400">
-                    {note.bookTitle || "—"}
-                  </td>
-                  <td className="py-3 text-zinc-400">{formatDate(note.createdAt)}</td>
+          <div className="nb-surface hidden overflow-hidden rounded-2xl sm:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200/80 bg-zinc-50/50 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:border-zinc-800/80 dark:bg-zinc-900/40 dark:text-zinc-400">
+                  <th className="px-5 py-3">Title</th>
+                  <th className="px-5 py-3">Book</th>
+                  <th className="px-5 py-3">Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((note: Note) => (
+                  <tr
+                    key={note.id}
+                    onClick={() => router.push(`/notes/${note.id}`)}
+                    className="group cursor-pointer border-b border-zinc-100/80 transition-colors hover:bg-amber-50/50 dark:border-zinc-800/60 dark:hover:bg-amber-950/20"
+                  >
+                    <td className="px-5 py-3 font-medium text-zinc-800 group-hover:text-amber-800 dark:text-zinc-100 dark:group-hover:text-amber-200">
+                      {note.title || (
+                        <span className="text-zinc-400 italic">Untitled</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3 text-zinc-500 dark:text-zinc-400">
+                      {note.bookTitle || "—"}
+                    </td>
+                    <td className="px-5 py-3 text-zinc-400">{formatDate(note.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

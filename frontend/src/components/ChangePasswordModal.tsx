@@ -89,7 +89,7 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {settingFirstPassword && (
-        <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+        <p className="rounded-lg border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-orange-50/60 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:border-amber-900/60 dark:from-amber-950/40 dark:to-orange-950/30 dark:text-amber-200">
           You currently sign in with Google. Setting a password lets you sign
           in with your email too.
         </p>
@@ -97,7 +97,7 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
 
       {!settingFirstPassword && (
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <label className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             Current password
           </label>
           <input
@@ -105,13 +105,13 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
             autoComplete="current-password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+            className="nb-input"
           />
         </div>
       )}
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        <label className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           New password
         </label>
         <input
@@ -121,13 +121,13 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          className="nb-input"
         />
         <p className="text-xs text-zinc-400">At least 8 characters</p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        <label className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Confirm new password
         </label>
         <input
@@ -136,12 +136,12 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           required
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          className="nb-input"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-300">
+        <p className="rounded-lg border border-red-200 bg-red-50/80 px-3 py-2 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
           {error}
         </p>
       )}
@@ -150,14 +150,14 @@ function Form({ me, onClose }: { me: User; onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="rounded-lg border border-zinc-300/80 bg-white/70 px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 dark:border-zinc-700/80 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={change.isPending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="nb-btn-primary rounded-lg px-5 py-2 text-sm font-semibold disabled:opacity-50"
         >
           {change.isPending ? "Saving…" : "Save"}
         </button>

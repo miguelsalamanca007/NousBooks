@@ -23,7 +23,7 @@ function BookResultCard({
   onOpenDetail: () => void;
 }) {
   return (
-    <div className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="nb-card flex gap-3 rounded-2xl p-4">
       {book.thumbnail ? (
         <Image
           src={book.thumbnail}
@@ -31,10 +31,10 @@ function BookResultCard({
           width={48}
           height={70}
           unoptimized
-          className="h-[70px] w-12 shrink-0 rounded object-cover"
+          className="h-[70px] w-12 shrink-0 rounded-md object-cover shadow-md shadow-zinc-900/15 ring-1 ring-black/5"
         />
       ) : (
-        <div className="h-[70px] w-12 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+        <div className="h-[70px] w-12 shrink-0 rounded-md bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700" />
       )}
 
       <div className="min-w-0 flex-1">
@@ -121,7 +121,7 @@ function SearchResults() {
         </button>
 
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Search results
           </h1>
           {q && (
@@ -144,12 +144,12 @@ function SearchResults() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="flex animate-pulse gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+              className="nb-surface flex gap-3 rounded-2xl p-4"
             >
-              <div className="h-24 w-16 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+              <div className="nb-skeleton h-24 w-16 shrink-0" />
               <div className="flex-1 space-y-2 pt-1">
-                <div className="h-4 w-3/4 rounded bg-zinc-100 dark:bg-zinc-800" />
-                <div className="h-3 w-1/2 rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="nb-skeleton h-4 w-3/4" />
+                <div className="nb-skeleton h-3 w-1/2" />
               </div>
             </div>
           ))}

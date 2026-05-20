@@ -38,7 +38,7 @@ function ResultsDropdown({
   onAdvancedSearch: () => void;
 }) {
   return (
-    <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="nb-modal-in absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/95 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:border-zinc-700/80 dark:bg-zinc-900/95">
       {isFetching && (
         <p className="px-4 py-3 text-sm text-zinc-400">Searching…</p>
       )}
@@ -210,16 +210,16 @@ export default function Navbar() {
   }
 
   const navLinkClass = (href: string) =>
-    `text-base font-medium transition-colors ${
+    `relative text-sm font-medium tracking-tight transition-colors after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-amber-500 after:to-orange-500 after:transition-all ${
       pathname === href
-        ? "text-zinc-900 dark:text-zinc-100"
-        : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+        ? "text-zinc-900 after:w-full dark:text-zinc-100"
+        : "text-zinc-600 after:w-0 hover:text-zinc-900 hover:after:w-full dark:text-zinc-400 dark:hover:text-zinc-200"
     }`;
 
   const showDropdown = open && debouncedQuery.length > 2;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80">
+    <header className="sticky top-0 z-30 border-b border-amber-200/50 bg-white/60 backdrop-blur-xl supports-[backdrop-filter]:bg-white/55 dark:border-zinc-800/80 dark:bg-zinc-950/60 dark:supports-[backdrop-filter]:bg-zinc-950/50">
       {/* ── Main row ─────────────────────────────────────────────────────────── */}
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-4 px-4 sm:gap-6 sm:px-6">
 
@@ -227,10 +227,10 @@ export default function Navbar() {
         <Link
           href="/dashboard"
           onClick={closeMobilePanels}
-          className="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-black dark:text-zinc-100"
+          className="group flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight"
         >
-          <BookIcon className="h-5 w-5" />
-          <span>Nous Books</span>
+          <BookIcon className="h-5 w-5 text-amber-700 transition-transform group-hover:rotate-[-6deg] dark:text-amber-300" />
+          <span className="nb-brand">Nous Books</span>
         </Link>
 
         {/* Desktop nav */}
@@ -250,7 +250,7 @@ export default function Navbar() {
             onFocus={() => query.length > 2 && setOpen(true)}
             placeholder="Search..."
             aria-label="Search books"
-            className="w-full rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+            className="w-full rounded-full border border-zinc-300/80 bg-white/80 px-4 py-1.5 text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition focus:border-amber-400 focus:bg-white focus:ring-4 focus:ring-amber-200/40 dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-amber-500 dark:focus:bg-zinc-900 dark:focus:ring-amber-700/20"
           />
           {showDropdown && (
             <ResultsDropdown
@@ -334,7 +334,7 @@ export default function Navbar() {
 
             {/* Dropdown menu — nav only; sign-out etc. live in UserMenu */}
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+              <div className="nb-modal-in absolute right-0 top-full mt-2 w-48 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/95 py-1 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:border-zinc-700/80 dark:bg-zinc-900/95">
                 {NAV_LINKS.map(({ href, label }) => (
                   <Link
                     key={href}
@@ -357,7 +357,7 @@ export default function Navbar() {
 
       {/* ── Mobile search bar (slide-down) ───────────────────────────────────── */}
       {mobileSearchOpen && (
-        <div className="border-t border-amber-200/60 bg-amber-50/80 px-4 py-3 md:hidden dark:border-zinc-800 dark:bg-zinc-900/80">
+        <div className="border-t border-amber-200/50 bg-white/60 px-4 py-3 backdrop-blur-xl md:hidden dark:border-zinc-800/80 dark:bg-zinc-950/60">
           <div ref={mobileSearchRef} className="relative">
             <input
               autoFocus
@@ -366,7 +366,7 @@ export default function Navbar() {
               onFocus={() => query.length > 2 && setOpen(true)}
               placeholder="Search books..."
               aria-label="Search books"
-              className="w-full rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm text-zinc-800 placeholder:text-zinc-500 outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+              className="w-full rounded-full border border-zinc-300/80 bg-white/90 px-4 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition focus:border-amber-400 focus:bg-white focus:ring-4 focus:ring-amber-200/40 dark:border-zinc-700/80 dark:bg-zinc-900/80 dark:text-zinc-100"
             />
             {showDropdown && (
               <ResultsDropdown

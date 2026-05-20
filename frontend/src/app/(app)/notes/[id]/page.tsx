@@ -61,7 +61,7 @@ export default function NoteDetailPage() {
   if (!note) return <p className="text-sm text-zinc-400">Note not found.</p>;
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl"><div className="nb-surface rounded-2xl p-6 sm:p-8">
 
       {/* Back + Delete */}
       <div className="mb-8 flex items-center justify-between">
@@ -80,7 +80,7 @@ export default function NoteDetailPage() {
             onClick={() => {
               if (confirm("Delete this note?")) deleteNote.mutate();
             }}
-            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/30"
+            className="rounded-lg border border-red-300/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:border-red-900/60 dark:bg-red-950/20 dark:text-red-300 dark:hover:bg-red-950/40"
           >
             Delete
           </button>
@@ -103,7 +103,7 @@ export default function NoteDetailPage() {
           }
         }}
         placeholder="Untitled"
-        className="mb-2 w-full bg-transparent text-3xl font-semibold text-zinc-800 outline-none placeholder:text-zinc-300 dark:text-zinc-100 dark:placeholder:text-zinc-600"
+        className="mb-2 w-full bg-transparent text-3xl font-bold tracking-tight text-zinc-900 outline-none placeholder:text-zinc-300 dark:text-zinc-100 dark:placeholder:text-zinc-600"
       />
 
       {/* Metadata */}
@@ -130,7 +130,7 @@ export default function NoteDetailPage() {
         rows={1}
         className="w-full resize-none bg-transparent text-base leading-relaxed text-zinc-700 outline-none placeholder:text-zinc-300 dark:text-zinc-200 dark:placeholder:text-zinc-600"
       />
-
+    </div>
     </div>
   );
 }

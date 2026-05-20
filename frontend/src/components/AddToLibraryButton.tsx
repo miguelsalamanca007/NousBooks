@@ -20,7 +20,7 @@ export default function AddToLibraryButton({
     return (
       <button
         disabled
-        className={`${base} flex items-center gap-1.5 border border-lime-400 bg-lime-100 text-lime-700 dark:border-lime-500 dark:bg-lime-900/40 dark:text-lime-300`}
+        className={`${base} flex items-center gap-1.5 border border-emerald-400/70 bg-gradient-to-r from-emerald-100 to-lime-100 text-emerald-800 shadow-sm shadow-emerald-300/40 dark:border-emerald-500/60 dark:from-emerald-900/40 dark:to-lime-900/40 dark:text-emerald-200 dark:shadow-emerald-900/40`}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@ export default function AddToLibraryButton({
     <button
       onClick={onAdd}
       disabled={isAdding}
-      className={`${base} border border-zinc-300 text-zinc-700 hover:bg-amber-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-amber-900/40`}
+      className={`${base} border border-zinc-300/80 bg-white/70 text-zinc-700 transition hover:border-amber-400 hover:bg-gradient-to-r hover:from-amber-100 hover:to-orange-100 hover:text-amber-900 disabled:opacity-50 dark:border-zinc-600/80 dark:bg-zinc-800/40 dark:text-zinc-200 dark:hover:border-amber-700 dark:hover:from-amber-900/40 dark:hover:to-orange-900/40 dark:hover:text-amber-100`}
     >
       {isAdding ? "Adding…" : "+ Add to library"}
     </button>

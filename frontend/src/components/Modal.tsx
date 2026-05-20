@@ -51,7 +51,7 @@ export default function Modal({
 
   const overlay = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
+      className="nb-backdrop-in fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-zinc-950/55 p-4 backdrop-blur-sm"
       onMouseDown={onClose}
     >
       <div
@@ -59,19 +59,19 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
         onMouseDown={(e) => e.stopPropagation()}
-        className={`w-full ${widthClass} max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900`}
+        className={`nb-modal-in w-full ${widthClass} max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-white/60 bg-white/95 p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-900/95`}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <h2
             id="modal-title"
-            className="text-xl font-semibold text-zinc-700 dark:text-zinc-100"
+            className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
           >
             {title}
           </h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            className="rounded-full p-1.5 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
             ✕
           </button>

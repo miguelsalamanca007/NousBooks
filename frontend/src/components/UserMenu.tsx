@@ -61,13 +61,13 @@ export default function UserMenu() {
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label="Open user menu"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-600"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-bold text-white shadow-md shadow-amber-500/40 ring-2 ring-white/60 transition hover:shadow-lg hover:shadow-amber-500/50 dark:ring-zinc-900/60"
         >
           {initial}
         </button>
 
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="nb-modal-in absolute right-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/95 py-2 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:border-zinc-700/80 dark:bg-zinc-900/95">
             {/* Profile header */}
             <div className="px-4 pb-2">
               <p className="truncate text-sm font-medium text-zinc-800 dark:text-zinc-100">
@@ -209,16 +209,16 @@ function ThemeSwitcher() {
       <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
         Theme
       </p>
-      <div className="flex rounded-lg bg-zinc-100 p-0.5 dark:bg-zinc-800">
+      <div className="flex rounded-xl bg-zinc-100/80 p-0.5 dark:bg-zinc-800/80">
         {options.map((opt) => (
           <button
             key={opt.value}
             onClick={() => setMode(opt.value)}
             aria-pressed={mode === opt.value}
-            className={`flex flex-1 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold transition-all ${
               mode === opt.value
-                ? "bg-white text-zinc-800 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
-                : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-sm shadow-amber-500/40"
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
             }`}
           >
             {opt.icon}
