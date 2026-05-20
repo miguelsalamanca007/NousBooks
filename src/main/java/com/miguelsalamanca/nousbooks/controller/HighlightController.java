@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miguelsalamanca.nousbooks.dto.CreateHighlightRequest;
@@ -19,6 +20,7 @@ import com.miguelsalamanca.nousbooks.dto.UpdateHighlightRequest;
 import com.miguelsalamanca.nousbooks.mapper.HighlightMapper;
 import com.miguelsalamanca.nousbooks.model.User;
 import com.miguelsalamanca.nousbooks.service.HighlightService;
+import com.miguelsalamanca.nousbooks.service.HighlightService.HighlightWithScore;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,16 @@ public class HighlightController {
         return highlightService.listByBook(bookId, currentUser)
                 .stream()
                 .map(highlightMapper::toDto)
+                .toList();
+    }
+
+    @GetMapping("/search")
+    public List<HighlightDto> search(@RequestParam("q") String query,
+                                     @RequestParam(value = "limit", defaultValue = "20") int limit,
+                                     @AuthenticationPrincipal User currentUser) {
+        List<HighlightWithScore> results = highlightService.search(query, limit, currentUser);
+        return results.stream()
+                .map(r -> highlightMapper.toDto(r.highlight(), r.distance()))
                 .toList();
     }
 
