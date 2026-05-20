@@ -49,9 +49,9 @@ export default function StarRating({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             aria-hidden="true"
-            className={`${starSize} transition-colors ${
+            className={`${starSize} transition-all ${
               active !== null && star <= active
-                ? "fill-amber-400 text-amber-400"
+                ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.55)] scale-110"
                 : "fill-zinc-200 text-zinc-200 dark:fill-zinc-700 dark:text-zinc-700"
             }`}
           >

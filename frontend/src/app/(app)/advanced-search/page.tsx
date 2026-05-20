@@ -31,7 +31,7 @@ function BookResultCard({
   onOpenDetail: () => void;
 }) {
   return (
-    <div className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="nb-card flex gap-3 rounded-2xl p-4">
       {book.thumbnail ? (
         <Image
           src={book.thumbnail}
@@ -39,10 +39,10 @@ function BookResultCard({
           width={48}
           height={70}
           unoptimized
-          className="h-[70px] w-12 shrink-0 rounded object-cover"
+          className="h-[70px] w-12 shrink-0 rounded-md object-cover shadow-md shadow-zinc-900/15 ring-1 ring-black/5"
         />
       ) : (
-        <div className="h-[70px] w-12 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+        <div className="h-[70px] w-12 shrink-0 rounded-md bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700" />
       )}
 
       <div className="min-w-0 flex-1">
@@ -92,11 +92,8 @@ function Field({
   );
 }
 
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-900/30";
-
-const selectClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-amber-500 dark:focus:ring-amber-900/30";
+const inputClass = "nb-input";
+const selectClass = "nb-input";
 
 // ── Main inner component ─────────────────────────────────────────────────────
 
@@ -191,7 +188,7 @@ function AdvancedSearchInner() {
         <aside>
           <form
             onSubmit={handleSearch}
-            className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+            className="nb-surface rounded-2xl p-5"
           >
             <h2 className="mb-5 text-sm font-bold uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
               Filters
@@ -273,7 +270,7 @@ function AdvancedSearchInner() {
             <div className="mt-6 flex flex-col gap-2">
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600 active:bg-amber-700 dark:bg-amber-600 dark:hover:bg-amber-500"
+                className="nb-btn-accent flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold tracking-tight"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 4.65 4.65a7.5 7.5 0 0 0 12 12z" />
@@ -295,7 +292,7 @@ function AdvancedSearchInner() {
         <section>
           {/* Idle state */}
           {activeParams === null && (
-            <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-amber-300/60 bg-gradient-to-br from-amber-50/40 to-orange-50/20 dark:border-amber-900/40 dark:from-amber-950/20 dark:to-orange-950/10">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-10 w-10 text-zinc-300 dark:text-zinc-600">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 4.65 4.65a7.5 7.5 0 0 0 12 12z" />
               </svg>
@@ -307,12 +304,12 @@ function AdvancedSearchInner() {
           {isFetching && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex animate-pulse gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-                  <div className="h-[70px] w-12 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div key={i} className="nb-surface flex gap-3 rounded-2xl p-4">
+                  <div className="nb-skeleton h-[70px] w-12 shrink-0" />
                   <div className="flex-1 space-y-2 pt-1">
-                    <div className="h-4 w-3/4 rounded bg-zinc-100 dark:bg-zinc-800" />
-                    <div className="h-3 w-1/2 rounded bg-zinc-100 dark:bg-zinc-800" />
-                    <div className="h-3 w-full rounded bg-zinc-100 dark:bg-zinc-800" />
+                    <div className="nb-skeleton h-4 w-3/4" />
+                    <div className="nb-skeleton h-3 w-1/2" />
+                    <div className="nb-skeleton h-3 w-full" />
                   </div>
                 </div>
               ))}
@@ -326,7 +323,7 @@ function AdvancedSearchInner() {
 
           {/* No results */}
           {activeParams !== null && !isFetching && !isError && results.length === 0 && (
-            <div className="flex h-40 items-center justify-center rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="nb-surface flex h-40 items-center justify-center rounded-2xl">
               <p className="text-sm text-zinc-400">No books found. Try adjusting your filters.</p>
             </div>
           )}

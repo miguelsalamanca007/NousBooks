@@ -40,7 +40,7 @@ export default function BookDetailModal({ book, onClose, onAdd, isAdding, isAdde
                 alt={book.title}
                 fill
                 unoptimized
-                className="rounded-lg object-cover shadow-md"
+                className="rounded-xl object-cover shadow-2xl shadow-amber-900/30 ring-1 ring-black/10"
               />
             </div>
           ) : (

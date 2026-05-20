@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userBooksApi } from "@/lib/api";
 import { Book, STATUS_COLORS, STATUS_LABELS } from "@/types";
+import BookIcon from "@/components/BookIcon";
 import StarRating from "@/components/StarRating";
 import ProgressBar from "@/components/ProgressBar";
 import UpdateProgressModal from "@/components/UpdateProgressModal";
@@ -32,23 +33,37 @@ export default function MyBooksPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["myBooks"] }),
   });
 
-  if (isLoading) return <p className="text-sm text-zinc-400">Loading…</p>;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="nb-skeleton h-20 w-full" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-zinc-800 dark:text-zinc-100">My Books</h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">My Books</h1>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{myBooks.length} book{myBooks.length !== 1 ? "s" : ""} in your library</p>
+      </div>
 
       {myBooks.length === 0 && (
-        <p className="text-sm text-zinc-400">
-          No books yet. Search for one using the search bar.
-        </p>
+        <div className="nb-surface rounded-2xl p-10 text-center">
+          <BookIcon className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600" />
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+            No books yet. Search for one using the search bar above.
+          </p>
+        </div>
       )}
 
       <ul className="flex flex-col gap-3">
         {myBooks.map((ub) => (
           <li
             key={ub.id}
-            className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-3 sm:items-center sm:gap-4 sm:p-4 dark:border-zinc-800 dark:bg-zinc-900"
+            className="nb-card flex items-start gap-3 rounded-2xl p-3 sm:items-center sm:gap-4 sm:p-4"
           >
             {/* Cover */}
             {ub.book.thumbnail ? (
@@ -58,10 +73,10 @@ export default function MyBooksPage() {
                 width={44}
                 height={64}
                 unoptimized
-                className="h-16 w-11 shrink-0 rounded object-cover"
+                className="h-16 w-11 shrink-0 rounded-md object-cover shadow-md shadow-zinc-900/15 ring-1 ring-black/5"
               />
             ) : (
-              <div className="h-16 w-11 shrink-0 rounded bg-zinc-100 dark:bg-zinc-800" />
+              <div className="h-16 w-11 shrink-0 rounded-md bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700" />
             )}
 
             {/* Title + meta */}
@@ -98,13 +113,13 @@ export default function MyBooksPage() {
                   size="sm"
                 />
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[ub.status]}`}
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLORS[ub.status]}`}
                 >
                   {STATUS_LABELS[ub.status]}
                 </span>
                 <Link
                   href={`/notes?bookId=${ub.book.id}&bookTitle=${encodeURIComponent(ub.book.title)}`}
-                  className="rounded-full border border-zinc-200 px-2.5 py-0.5 text-xs text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                  className="rounded-full border border-zinc-200/80 bg-white/60 px-2.5 py-0.5 text-xs text-zinc-600 transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800 dark:border-zinc-700/80 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:border-amber-700 dark:hover:bg-amber-950/40 dark:hover:text-amber-200"
                 >
                   Notes
                 </Link>

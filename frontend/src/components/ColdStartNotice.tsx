@@ -7,8 +7,9 @@
  */
 export default function ColdStartNotice() {
   return (
-    <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400">
-      ⏱ First request may take 1–2 min to wake the server up.
+    <p className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-orange-50/60 px-3 py-2 text-xs text-amber-900 dark:border-amber-900/50 dark:from-amber-950/30 dark:to-orange-950/20 dark:text-amber-200">
+      <span>⏱</span>
+      <span>First request may take 1–2 min to wake the server up.</span>
     </p>
   );
 }

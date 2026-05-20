@@ -83,7 +83,20 @@ export default function DashboardPage() {
     updateBook.mutate({ id: book.id, status: newStatus });
   }
 
-  if (isLoading) return <p className="text-sm text-zinc-400">Loading…</p>;
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+        {Array.from({ length: 3 }).map((_, col) => (
+          <div key={col} className="flex flex-col gap-3">
+            <div className="nb-skeleton mx-auto h-4 w-32" />
+            {Array.from({ length: 2 }).map((__, i) => (
+              <div key={i} className="nb-skeleton h-24 w-full" />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <DndContext
@@ -92,22 +105,23 @@ export default function DashboardPage() {
       onDragEnd={handleDragEnd}
     >
       {/* ── Mobile tab bar ─────────────────────────────────────────────────── */}
-      <div className="mb-4 flex rounded-xl border border-zinc-200 bg-white p-1 md:hidden dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="nb-surface mb-4 flex rounded-2xl p-1 md:hidden">
         {COLUMNS.map(({ status, label }) => {
           const count = myBooks.filter((ub) => ub.status === status).length;
+          const active = mobileTab === status;
           return (
             <button
               key={status}
               onClick={() => setMobileTab(status)}
-              className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium transition-colors ${
-                mobileTab === status
-                  ? "bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200"
-                  : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+              className={`flex-1 rounded-xl px-2 py-2 text-xs font-semibold tracking-tight transition-all ${
+                active
+                  ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-500/30"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
               }`}
             >
               {label}
               {count > 0 && (
-                <span className="ml-1 text-zinc-400">({count})</span>
+                <span className={`ml-1 ${active ? "text-amber-50/90" : "text-zinc-400"}`}>({count})</span>
               )}
             </button>
           );
@@ -214,20 +228,34 @@ function Column({
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
+  const accent =
+    status === "TO_READ"
+      ? "text-amber-600 dark:text-amber-400"
+      : status === "READING"
+      ? "text-sky-600 dark:text-sky-400"
+      : "text-emerald-600 dark:text-emerald-400";
+
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-40 rounded-xl p-2 transition-colors ${
-        isOver ? "bg-amber-100/60 dark:bg-amber-900/20" : "bg-transparent"
+      className={`min-h-40 rounded-2xl p-2 transition-all duration-200 ${
+        isOver
+          ? "scale-[1.01] bg-gradient-to-b from-amber-100/70 to-transparent ring-2 ring-amber-300/60 dark:from-amber-900/25 dark:ring-amber-700/50"
+          : "bg-transparent"
       }`}
     >
       {/* Column header — hidden when tabs already show the label */}
       {!hiddenHeader && (
-        <div className="mb-4 flex flex-col items-center gap-1 px-1">
-          <BookIcon className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-            {label}
-          </h2>
+        <div className="mb-4 flex flex-col items-center gap-1.5 px-1">
+          <BookIcon className={`h-7 w-7 ${accent}`} />
+          <h2 className="nb-eyebrow">{label}</h2>
+          <div className={`h-0.5 w-10 rounded-full bg-gradient-to-r ${
+            status === "TO_READ"
+              ? "from-amber-300 to-orange-400"
+              : status === "READING"
+              ? "from-sky-300 to-cyan-400"
+              : "from-emerald-300 to-teal-400"
+          }`} />
         </div>
       )}
       <ul className="flex flex-col gap-3">{children}</ul>
@@ -272,10 +300,8 @@ function BookCard({
       style={style}
       {...attributes}
       {...listeners}
-      className={`group relative flex gap-3 rounded-xl border bg-white p-3 transition-opacity select-none cursor-grab active:cursor-grabbing dark:bg-zinc-900 ${
-        isDragging
-          ? "opacity-40 border-zinc-300 dark:border-zinc-700"
-          : "border-zinc-200 opacity-100 dark:border-zinc-800"
+      className={`nb-card group relative flex gap-3 rounded-2xl p-3 select-none cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-40" : "opacity-100"
       }`}
     >
       {ub.book.thumbnail ? (
@@ -285,10 +311,10 @@ function BookCard({
           width={44}
           height={64}
           unoptimized
-          className="h-16 w-11 shrink-0 rounded object-cover"
+          className="h-16 w-11 shrink-0 rounded-md object-cover shadow-md shadow-zinc-900/15 ring-1 ring-black/5"
         />
       ) : (
-        <div className="h-16 w-11 shrink-0 rounded bg-zinc-100" />
+        <div className="h-16 w-11 shrink-0 rounded-md bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700" />
       )}
 
       <div className="min-w-0 flex-1">
@@ -331,19 +357,19 @@ function BookCard({
           </div>
         )}
 
-        <div className="mt-2 flex flex-wrap gap-1">
+        <div className="mt-2 flex flex-wrap gap-1.5">
           {others.map((c) => (
             <button
               key={c.status}
               onClick={() => onMove(c.status)}
-              className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 hover:bg-zinc-200 cursor-pointer dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+              className="rounded-full border border-zinc-200/80 bg-white/60 px-2 py-0.5 text-xs text-zinc-600 transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800 cursor-pointer dark:border-zinc-700/80 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:border-amber-700 dark:hover:bg-amber-950/40 dark:hover:text-amber-200"
             >
               → {c.label}
             </button>
           ))}
           <button
             onClick={onAddNote}
-            className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 hover:bg-amber-200 cursor-pointer dark:bg-amber-950/50 dark:text-amber-200 dark:hover:bg-amber-900/60"
+            className="rounded-full bg-gradient-to-r from-amber-200 to-orange-200 px-2 py-0.5 text-xs font-semibold text-amber-900 shadow-sm shadow-amber-300/40 transition hover:from-amber-300 hover:to-orange-300 cursor-pointer dark:from-amber-900/60 dark:to-orange-900/60 dark:text-amber-100 dark:shadow-amber-900/40"
           >
             + Note
           </button>
@@ -365,7 +391,7 @@ function BookCard({
 
 function BookCardStatic({ ub }: { ub: UserBook }) {
   return (
-    <li className="flex gap-3 rounded-xl border border-amber-300 bg-white p-3 shadow-lg rotate-1 dark:border-amber-700 dark:bg-zinc-900">
+    <li className="flex gap-3 rounded-2xl border border-amber-300/80 bg-white/95 p-3 shadow-[0_24px_50px_-20px_rgba(217,119,6,0.45)] rotate-1 backdrop-blur dark:border-amber-700/70 dark:bg-zinc-900/95">
       {ub.book.thumbnail ? (
         <Image
           src={ub.book.thumbnail}
